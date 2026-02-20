@@ -1,0 +1,1632 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="color-scheme" content="light" />
+<title>Cristo Rey Jesuit — Work Study Attendance</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Open+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --navy:       #1e2d4e;   /* Cristo Rey TC exact navy from logo */
+    --navy-dark:  #16243f;
+    --navy-mid:   #1e2d4e;
+    --navy-light: #253660;
+    --gold:       #f0a030;   /* Cristo Rey TC amber/crown gold from logo */
+    --gold-light: #f5b84a;
+    --gold-pale:  #fff8ec;
+    --cream:      #f4f6f9;
+    --green:      #1e6b45;
+    --red:        #c0392b;
+    --amber:      #c07a10;
+    --text:       #111827;
+    --muted:      #6b7280;
+    --border:     #dde3ed;
+    --card:       #ffffff;
+    --radius:     10px;
+  }
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+font-family: ‘Open Sans’, sans-serif;
+background: var(–cream);
+color: var(–text);
+min-height: 100vh;
+color-scheme: light only;
+}
+
+/* Force light mode regardless of OS/browser dark mode preference */
+:root {
+color-scheme: light only;
+}
+
+/* ─── LAYOUT ─── */
+
+/* ─── FORCE LIGHT MODE ─── */
+@media (prefers-color-scheme: dark) {
+body { background: #f4f6f9 !important; color: #111827 !important; }
+.table-card, .stat-card, .code-gen-section, .checkin-card, .login-card, .modal { background: #ffffff !important; color: #0d1b2a !important; }
+thead th { background: #fafafa !important; color: #6b7280 !important; }
+tbody td { color: #111827 !important; background: transparent !important; }
+tbody tr:hover { background: #f4f6f9 !important; }
+input, select { background: white !important; color: #1c1410 !important; border-color: #dde3ed !important; }
+.code-input { background: #f4f6f9 !important; color: #1e2d4e !important; }
+.code-input:focus { background: white !important; }
+.absent-list { background: #f4f6f9 !important; }
+.generated-code { background: #f4f6f9 !important; color: #1e2d4e !important; }
+.demo-user-btn { background: #f4f6f9 !important; color: #111827 !important; }
+.sso-btn { background: white !important; color: #0d1b2a !important; }
+.student-name, .page-title, .section-title, .modal-title, .checkin-title, .table-title, .login-title { color: #1e2d4e !important; }
+.stat-card.present .stat-number { color: #2a6e48 !important; }
+.stat-card.late .stat-number { color: #a06520 !important; }
+.stat-card.absent .stat-number { color: #991f1f !important; }
+.stat-card { background: white !important; }
+.time-cell, .student-email, .page-subtitle, .section-sub, .modal-subtitle, .checkin-date { color: #6b7280 !important; }
+}
+.app { min-height: 100vh; display: flex; flex-direction: column; }
+
+/* ─── HEADER ─── */
+header {
+background: var(–navy);
+color: white;
+padding: 0 2rem;
+height: 64px;
+display: flex;
+align-items: center;
+justify-content: space-between;
+position: sticky;
+top: 0;
+z-index: 100;
+box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+}
+
+.logo {
+display: flex;
+align-items: center;
+gap: 12px;
+}
+
+.logo-mark {
+width: 36px; height: 36px;
+background: var(–gold);
+border-radius: 8px;
+display: flex; align-items: center; justify-content: center;
+font-family: ‘Oswald’, sans-serif;
+font-size: 18px;
+color: var(–navy);
+font-weight: bold;
+}
+
+.logo-text {
+font-family: ‘Oswald’, sans-serif;
+font-size: 1.2rem;
+letter-spacing: 0.02em;
+}
+
+.logo-sub {
+font-size: 0.65rem;
+color: rgba(255,255,255,0.5);
+letter-spacing: 0.12em;
+text-transform: uppercase;
+margin-top: 1px;
+}
+
+.header-right {
+display: flex;
+align-items: center;
+gap: 16px;
+}
+
+.user-pill {
+display: flex;
+align-items: center;
+gap: 8px;
+background: rgba(255,255,255,0.08);
+border: 1px solid rgba(255,255,255,0.12);
+border-radius: 100px;
+padding: 6px 14px 6px 8px;
+cursor: pointer;
+transition: background 0.2s;
+}
+.user-pill:hover { background: rgba(255,255,255,0.14); }
+
+.avatar {
+width: 28px; height: 28px;
+border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+font-size: 12px;
+font-weight: 600;
+color: white;
+}
+.avatar.admin { background: var(–gold); color: var(–navy); }
+.avatar.student { background: var(–navy-light); }
+
+.user-name { font-size: 0.85rem; color: rgba(255,255,255,0.9); }
+
+/* ─── NAV TABS ─── */
+.nav-tabs {
+display: flex;
+gap: 4px;
+background: rgba(255,255,255,0.06);
+border-radius: 8px;
+padding: 3px;
+}
+.nav-tab {
+padding: 6px 14px;
+border-radius: 6px;
+font-size: 0.82rem;
+font-weight: 500;
+cursor: pointer;
+border: none;
+background: transparent;
+color: rgba(255,255,255,0.6);
+transition: all 0.2s;
+}
+.nav-tab.active {
+background: var(–gold);
+color: var(–navy);
+}
+.nav-tab:hover:not(.active) { color: white; background: rgba(255,255,255,0.1); }
+
+/* ─── MAIN ─── */
+main {
+flex: 1;
+padding: 2rem;
+padding-bottom: 5rem;
+max-width: 1200px;
+margin: 0 auto;
+width: 100%;
+}
+
+/* ─── LOGIN SCREEN ─── */
+.login-screen {
+min-height: 100vh;
+display: flex;
+flex-direction: column;
+align-items: center;
+justify-content: center;
+background: #16243f;
+position: relative;
+overflow: hidden;
+}
+
+.login-bg {
+position: absolute; inset: 0;
+background: radial-gradient(ellipse at 25% 60%, rgba(201,168,76,0.08) 0%, transparent 55%),
+radial-gradient(ellipse at 75% 20%, rgba(17,31,66,0.8) 0%, transparent 50%);
+pointer-events: none;
+}
+
+.login-grid {
+position: absolute; inset: 0;
+background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+background-size: 60px 60px;
+pointer-events: none;
+}
+
+.login-card {
+position: relative;
+background: white;
+border-radius: 20px;
+padding: 3rem;
+width: 100%;
+max-width: 420px;
+box-shadow: 0 40px 80px rgba(0,0,0,0.4);
+}
+
+.login-logo {
+text-align: center;
+margin-bottom: 2.5rem;
+}
+
+.login-logo-mark {
+width: 56px; height: 56px;
+background: var(–navy);
+border-radius: 14px;
+display: flex; align-items: center; justify-content: center;
+font-family: ‘Oswald’, sans-serif;
+font-size: 28px;
+color: var(–gold);
+margin: 0 auto 12px;
+}
+
+.login-title {
+font-family: ‘Oswald’, sans-serif;
+font-size: 1.6rem;
+color: var(–navy);
+margin-bottom: 4px;
+}
+
+.login-subtitle {
+font-size: 0.85rem;
+color: var(–muted);
+}
+
+.login-divider {
+text-align: center;
+position: relative;
+margin: 1.5rem 0;
+font-size: 0.8rem;
+color: var(–muted);
+}
+.login-divider::before, .login-divider::after {
+content: ‘’;
+position: absolute;
+top: 50%;
+width: 40%;
+height: 1px;
+background: var(–border);
+}
+.login-divider::before { left: 0; }
+.login-divider::after { right: 0; }
+
+.sso-btn {
+width: 100%;
+padding: 12px;
+border: 1.5px solid var(–border);
+border-radius: var(–radius);
+background: white;
+cursor: pointer;
+display: flex;
+align-items: center;
+justify-content: center;
+gap: 10px;
+font-size: 0.9rem;
+font-family: ‘Open Sans’, sans-serif;
+font-weight: 500;
+color: var(–text);
+transition: all 0.2s;
+margin-bottom: 10px;
+}
+.sso-btn:hover { background: var(–cream); border-color: #ccc; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+
+.sso-icon { width: 20px; height: 20px; flex-shrink: 0; }
+
+.login-demo {
+margin-top: 1.5rem;
+padding-top: 1.5rem;
+border-top: 1px solid var(–border);
+}
+
+.demo-label {
+font-size: 0.75rem;
+color: var(–muted);
+text-align: center;
+margin-bottom: 10px;
+letter-spacing: 0.08em;
+text-transform: uppercase;
+}
+
+.demo-users {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 8px;
+}
+
+.demo-user-btn {
+padding: 10px;
+border-radius: 10px;
+border: 1.5px solid var(–border);
+background: var(–cream);
+cursor: pointer;
+text-align: center;
+transition: all 0.2s;
+font-family: ‘Open Sans’, sans-serif;
+}
+.demo-user-btn:hover { border-color: var(–navy); background: white; transform: translateY(-1px); }
+.demo-user-btn .role { font-size: 0.7rem; color: var(–muted); text-transform: uppercase; letter-spacing: 0.06em; }
+.demo-user-btn .name { font-size: 0.85rem; font-weight: 600; color: var(–navy); margin-top: 2px; }
+
+/* ─── CHECKIN SCREEN ─── */
+.checkin-screen {
+display: flex;
+flex-direction: column;
+align-items: center;
+padding-top: 2rem;
+}
+
+.checkin-card {
+background: white;
+border-radius: 20px;
+padding: 2.5rem;
+width: 100%;
+max-width: 480px;
+box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+border: 1px solid var(–border);
+}
+
+.checkin-header {
+text-align: center;
+margin-bottom: 2rem;
+}
+
+.checkin-icon {
+width: 64px; height: 64px;
+border-radius: 16px;
+display: flex; align-items: center; justify-content: center;
+font-size: 28px;
+margin: 0 auto 1rem;
+}
+.checkin-icon.pending { background: #fff8e6; }
+.checkin-icon.success { background: #e8faf0; }
+.checkin-icon.error { background: #fdecea; }
+
+.checkin-title {
+font-family: ‘Oswald’, sans-serif;
+font-size: 1.5rem;
+color: var(–navy);
+margin-bottom: 4px;
+}
+
+.checkin-date {
+font-size: 0.85rem;
+color: var(–muted);
+}
+
+.code-input-group {
+margin: 1.5rem 0;
+}
+
+.code-label {
+font-size: 0.8rem;
+font-weight: 600;
+color: var(–navy);
+letter-spacing: 0.06em;
+text-transform: uppercase;
+margin-bottom: 8px;
+display: block;
+}
+
+.code-input {
+width: 100%;
+padding: 14px 16px;
+border: 2px solid var(–border);
+border-radius: var(–radius);
+font-size: 1.4rem;
+font-family: ‘DM Mono’, ‘Courier New’, monospace;
+font-weight: 600;
+letter-spacing: 0.3em;
+text-align: center;
+text-transform: uppercase;
+color: var(–navy);
+outline: none;
+transition: border-color 0.2s;
+background: var(–cream);
+}
+.code-input:focus { border-color: var(–navy); background: white; }
+.code-input.error { border-color: var(–red); }
+.code-input.success { border-color: var(–green); }
+
+.btn {
+width: 100%;
+padding: 14px;
+border-radius: var(–radius);
+font-family: ‘Open Sans’, sans-serif;
+font-size: 0.95rem;
+font-weight: 600;
+cursor: pointer;
+border: none;
+transition: all 0.2s;
+display: flex; align-items: center; justify-content: center; gap: 8px;
+}
+
+.btn-primary {
+background: var(–navy);
+color: white;
+}
+.btn-primary:hover:not(:disabled) { background: var(–navy-light); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(10,22,40,0.3); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.btn-gold {
+background: var(–gold);
+color: var(–navy);
+}
+.btn-gold:hover { background: var(–gold-light); transform: translateY(-1px); }
+
+.btn-outline {
+background: transparent;
+border: 1.5px solid var(–border);
+color: var(–text);
+}
+.btn-outline:hover { background: var(–cream); }
+
+.btn-sm {
+width: auto;
+padding: 8px 16px;
+font-size: 0.82rem;
+}
+
+.btn-danger {
+background: #fdecea;
+color: var(–red);
+border: 1px solid #f5c6c3;
+}
+.btn-danger:hover { background: #f9d9d7; }
+
+.alert {
+padding: 12px 16px;
+border-radius: 10px;
+font-size: 0.85rem;
+margin-bottom: 1rem;
+display: flex;
+align-items: center;
+gap: 8px;
+}
+.alert-error { background: #fdecea; color: #c0392b; }
+.alert-success { background: #e8faf0; color: #1a7a4a; }
+.alert-info { background: #e8f0fe; color: #1a56db; }
+.alert-warning { background: #fff8e6; color: #b45309; }
+
+/* ─── STATUS BADGE ─── */
+.badge {
+display: inline-flex;
+align-items: center;
+gap: 5px;
+padding: 4px 10px;
+border-radius: 100px;
+font-size: 0.75rem;
+font-weight: 600;
+letter-spacing: 0.02em;
+}
+.badge-present { background: #e8faf0; color: #1a7a4a; }
+.badge-late { background: #fff8e6; color: #b45309; }
+.badge-absent { background: #fdecea; color: #c0392b; }
+.badge-dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+/* ─── ADMIN DASHBOARD ─── */
+.dashboard-header {
+display: flex;
+align-items: flex-start;
+justify-content: space-between;
+margin-bottom: 2rem;
+flex-wrap: wrap;
+gap: 1rem;
+}
+
+.page-title {
+font-family: ‘Oswald’, sans-serif;
+font-size: 1.8rem;
+color: var(–navy);
+}
+
+.page-subtitle {
+font-size: 0.85rem;
+color: var(–muted);
+margin-top: 4px;
+}
+
+.dashboard-actions {
+display: flex;
+gap: 8px;
+flex-wrap: wrap;
+}
+
+/* ─── STAT CARDS ─── */
+.stats-grid {
+display: grid;
+grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+gap: 1rem;
+margin-bottom: 2rem;
+}
+
+.stat-card {
+background: white;
+border-radius: var(–radius);
+padding: 1.25rem;
+border: 1px solid var(–border);
+}
+
+.stat-label {
+font-size: 0.75rem;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 0.08em;
+color: var(–muted);
+margin-bottom: 8px;
+}
+
+.stat-number {
+font-family: ‘Oswald’, sans-serif;
+font-size: 2rem;
+color: var(–navy);
+line-height: 1;
+}
+
+.stat-card.present .stat-number { color: #1a7a4a; }
+.stat-card.late .stat-number { color: #b45309; }
+.stat-card.absent .stat-number { color: var(–red); }
+
+/* ─── CODE DISPLAY ─── */
+.code-display-card {
+background: var(–navy);
+border-radius: 16px;
+padding: 1.5rem 2rem;
+margin-bottom: 2rem;
+display: flex;
+align-items: center;
+justify-content: space-between;
+flex-wrap: wrap;
+gap: 1rem;
+color: white;
+}
+
+.code-display-label {
+font-size: 0.75rem;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+color: rgba(255,255,255,0.5);
+margin-bottom: 4px;
+}
+
+.code-display-value {
+font-family: ‘Oswald’, sans-serif;
+font-size: 2.8rem;
+letter-spacing: 0.25em;
+color: var(–gold);
+line-height: 1;
+}
+
+.code-display-hint {
+font-size: 0.8rem;
+color: rgba(255,255,255,0.4);
+margin-top: 4px;
+}
+
+/* ─── ATTENDANCE TABLE ─── */
+.table-card {
+background: white;
+border-radius: 16px;
+border: 1px solid var(–border);
+overflow: hidden;
+}
+
+.table-header {
+padding: 1.25rem 1.5rem;
+border-bottom: 1px solid var(–border);
+display: flex;
+align-items: center;
+justify-content: space-between;
+flex-wrap: wrap;
+gap: 8px;
+}
+
+.table-title {
+font-weight: 600;
+font-size: 0.95rem;
+color: var(–navy);
+}
+
+.search-input {
+padding: 8px 12px;
+border: 1.5px solid var(–border);
+border-radius: 8px;
+font-family: ‘Open Sans’, sans-serif;
+font-size: 0.85rem;
+outline: none;
+width: 220px;
+transition: border-color 0.2s;
+}
+.search-input:focus { border-color: var(–navy); }
+
+table {
+width: 100%;
+border-collapse: collapse;
+}
+
+thead th {
+padding: 10px 16px;
+text-align: left;
+font-size: 0.72rem;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 0.08em;
+color: var(–muted);
+background: #fafafa;
+border-bottom: 1px solid var(–border);
+}
+
+tbody tr {
+border-bottom: 1px solid #f3f4f6;
+transition: background 0.1s;
+}
+tbody tr:last-child { border-bottom: none; }
+tbody tr:hover { background: #f9fafb; }
+
+tbody td {
+padding: 12px 16px;
+font-size: 0.875rem;
+vertical-align: middle;
+}
+
+.student-cell {
+display: flex;
+align-items: center;
+gap: 10px;
+}
+
+.student-avatar {
+width: 32px; height: 32px;
+border-radius: 50%;
+display: flex; align-items: center; justify-content: center;
+font-size: 12px;
+font-weight: 700;
+color: white;
+flex-shrink: 0;
+}
+
+.student-name { font-weight: 600; color: var(–navy); }
+.student-email { font-size: 0.75rem; color: var(–muted); }
+
+.time-cell { font-size: 0.8rem; color: var(–muted); }
+
+.status-select {
+padding: 5px 8px;
+border: 1.5px solid var(–border);
+border-radius: 8px;
+font-family: ‘Open Sans’, sans-serif;
+font-size: 0.8rem;
+cursor: pointer;
+outline: none;
+background: white;
+color: var(–text);
+}
+
+.notes-input {
+padding: 5px 8px;
+border: 1.5px solid var(–border);
+border-radius: 8px;
+font-family: ‘Open Sans’, sans-serif;
+font-size: 0.8rem;
+width: 180px;
+outline: none;
+transition: border-color 0.2s;
+}
+.notes-input:focus { border-color: var(–navy); }
+
+/* ─── ABSENT MODAL ─── */
+.modal-overlay {
+position: fixed; inset: 0;
+background: rgba(0,0,0,0.5);
+display: flex;
+align-items: center;
+justify-content: center;
+z-index: 1000;
+padding: 1rem;
+backdrop-filter: blur(4px);
+}
+
+.modal {
+background: white;
+border-radius: 20px;
+padding: 2rem;
+width: 100%;
+max-width: 560px;
+box-shadow: 0 40px 80px rgba(0,0,0,0.2);
+animation: modal-in 0.2s ease;
+}
+
+@keyframes modal-in {
+from { transform: translateY(20px); opacity: 0; }
+to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-title {
+font-family: ‘Oswald’, sans-serif;
+font-size: 1.3rem;
+color: var(–navy);
+margin-bottom: 4px;
+}
+
+.modal-subtitle { font-size: 0.85rem; color: var(–muted); margin-bottom: 1.5rem; }
+
+.absent-list {
+background: var(–cream);
+border-radius: 10px;
+padding: 1rem;
+margin-bottom: 1.5rem;
+max-height: 280px;
+overflow-y: auto;
+}
+
+.absent-item {
+display: flex;
+align-items: center;
+justify-content: space-between;
+padding: 8px 0;
+border-bottom: 1px solid var(–border);
+}
+.absent-item:last-child { border-bottom: none; }
+
+.absent-name { font-weight: 600; font-size: 0.9rem; }
+.absent-sup { font-size: 0.75rem; color: var(–muted); }
+.called-badge {
+font-size: 0.72rem;
+font-weight: 600;
+padding: 3px 8px;
+border-radius: 100px;
+cursor: pointer;
+border: none;
+transition: all 0.2s;
+}
+.called-badge.no { background: #fdecea; color: var(–red); }
+.called-badge.yes { background: #e8faf0; color: #1a7a4a; }
+
+.modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+
+/* ─── CODE GEN ─── */
+.code-gen-section {
+background: white;
+border-radius: 16px;
+padding: 1.5rem;
+border: 1px solid var(–border);
+margin-bottom: 2rem;
+}
+
+.section-title {
+font-family: ‘Oswald’, sans-serif;
+font-size: 1.1rem;
+color: var(–navy);
+margin-bottom: 4px;
+}
+.section-sub { font-size: 0.82rem; color: var(–muted); margin-bottom: 1rem; }
+
+.code-gen-row {
+display: flex;
+align-items: center;
+gap: 12px;
+flex-wrap: wrap;
+}
+
+.generated-code {
+font-family: ‘DM Mono’, ‘Courier New’, monospace;
+font-size: 1.8rem;
+font-weight: 700;
+letter-spacing: 0.3em;
+color: var(–navy);
+background: var(–cream);
+padding: 10px 20px;
+border-radius: 10px;
+border: 2px solid var(–border);
+min-width: 160px;
+text-align: center;
+}
+
+/* ─── ROSTER MANAGEMENT ─── */
+.roster-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
+gap: 1.5rem;
+margin-bottom: 1.5rem;
+}
+@media (max-width: 640px) { .roster-grid { grid-template-columns: 1fr; } }
+
+.form-group { margin-bottom: 1rem; }
+.form-label {
+display: block;
+font-size: 0.8rem;
+font-weight: 600;
+text-transform: uppercase;
+letter-spacing: 0.06em;
+color: var(–muted);
+margin-bottom: 6px;
+}
+.form-input {
+width: 100%;
+padding: 10px 12px;
+border: 1.5px solid var(–border);
+border-radius: 8px;
+font-family: ‘Open Sans’, sans-serif;
+font-size: 0.875rem;
+outline: none;
+transition: border-color 0.2s;
+background: white;
+}
+.form-input:focus { border-color: var(–navy); }
+
+/* ─── ANIMATIONS ─── */
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(10px); }
+to { opacity: 1; transform: translateY(0); }
+}
+.fade-in { animation: fadeIn 0.3s ease forwards; }
+
+@keyframes pulse-ring {
+0% { box-shadow: 0 0 0 0 rgba(46,204,113,0.4); }
+70% { box-shadow: 0 0 0 12px rgba(46,204,113,0); }
+100% { box-shadow: 0 0 0 0 rgba(46,204,113,0); }
+}
+.pulse { animation: pulse-ring 1.5s infinite; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+main { padding: 1rem; }
+.dashboard-header { flex-direction: column; }
+.code-display-card { flex-direction: column; }
+.table-header { flex-direction: column; align-items: flex-start; }
+.search-input { width: 100%; }
+table { font-size: 0.8rem; }
+thead th, tbody td { padding: 8px 10px; }
+.notes-input { width: 120px; }
+}
+
+.hidden { display: none !important; }
+</style>
+
+</head>
+<body>
+<div id="app"></div>
+
+<script>
+// ═══════════════════════════════════════════════════
+//  CONSTANTS
+// ═══════════════════════════════════════════════════
+const COLORS = ['#2c3e50','#8e44ad','#2980b9','#16a085','#d35400','#c0392b','#27ae60','#1abc9c','#e67e22','#7f8c8d'];
+
+const GRADE_DAYS = { freshman: 'Wednesday', sophomore: 'Thursday', junior: 'Monday', senior: 'Tuesday' };
+
+const AM_TRANSPORT = [
+  'Early Van/Taxi',
+  'Shuttle 1','Shuttle 2','Shuttle 3','Shuttle 4','Shuttle 5','Shuttle 6',
+  'Van 1','Van 2','Van 3','Van 4','Van 5','Van 6',
+];
+const PM_TRANSPORT = [
+  'Van 1','Van 2','Van 3','Van 4','Van 5','Van 6',
+  'City Bus','Taxi','Parent Pick-Up',
+];
+
+// ─── DEMO CALENDAR ─────────────────────────────────
+const DEMO_CALENDAR = (() => {
+  const days = [];
+  const start = new Date('2026-01-05');
+  const end   = new Date('2026-05-28');
+  const off = new Set([
+    '2026-01-19',
+    '2026-02-16','2026-02-17','2026-02-18','2026-02-19',
+    '2026-03-23','2026-03-24','2026-03-25','2026-03-26',
+    '2026-04-02','2026-04-03',
+  ]);
+  for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
+    const dow = d.getDay();
+    if (dow >= 1 && dow <= 4) {
+      const iso = d.toISOString().slice(0,10);
+      days.push({ date: iso, grade: ['','junior','senior','freshman','sophomore'][dow], holiday: off.has(iso) });
+    }
+  }
+  return days;
+})();
+
+// ─── DEMO DATA ─────────────────────────────────────
+const DEMO_USERS = [
+  { id: 'admin1', name: 'Ms. Rivera', email: 'mrivera@cwsp.edu', role: 'admin', color: '#0a1628' },
+  { id: 's1', name: 'Jordan Ellis',  email: 'jellis@cristoreytc.edu',  role: 'student', grade: 'junior',    phone: '312-555-0101', color: COLORS[0], company: 'Acme Financial Group',        supervisors: [{ id:'sv1a', name:'James Smith',    email:'jsmith@acmefinancial.com',    role:'primary' },{ id:'sv1b', name:'Dana Holloway',  email:'dholloway@acmefinancial.com',  role:'program-manager' }], location: 'on-site',        straightToWork: 'none',      ptoUsed: false, amTransport: 'Shuttle 3',    pmTransport: 'Van 2',        jobHistory: [] },
+  { id: 's2', name: 'Maya Chen',     email: 'mchen@cristoreytc.edu',   role: 'student', grade: 'junior',    phone: '773-555-0182', color: COLORS[1], company: 'TechCo Solutions',            supervisors: [{ id:'sv2a', name:'Karen Williams', email:'kwilliams@techco.com',        role:'primary' },{ id:'sv2b', name:'Omar Benson',    email:'obenson@techco.com',           role:'program-manager' }], location: 'remote-campus',  straightToWork: 'none',      ptoUsed: false, amTransport: 'Shuttle 1',    pmTransport: 'City Bus',     jobHistory: [] },
+  { id: 's3', name: 'Darius King',   email: 'dking@cristoreytc.edu',   role: 'student', grade: 'senior',    phone: '',             color: COLORS[2], company: 'Morrison & Park Law',         supervisors: [{ id:'sv3a', name:'Linda Brown',    email:'lbrown@morrisonpark.com',     role:'primary' },{ id:'sv3b', name:'Ray Nguyen',     email:'rnguyen@morrisonpark.com',     role:'secondary' },{ id:'sv3c', name:'Carla Soto', email:'csoto@morrisonpark.com', role:'program-manager' }], location: 'on-site',        straightToWork: 'permanent', ptoUsed: false, amTransport: 'Van 1',        pmTransport: 'Van 1',        jobHistory: [] },
+  { id: 's4', name: 'Sofia Reyes',   email: 'sreyes@cristoreytc.edu',  role: 'student', grade: 'senior',    phone: '312-555-0247', color: COLORS[3], company: 'Northwestern Hospital',       supervisors: [{ id:'sv4a', name:'Nancy Park',     email:'npark@nwhospital.org',        role:'primary' },{ id:'sv4b', name:'Greg Okafor',    email:'gokafor@nwhospital.org',       role:'program-manager' }], location: 'on-site',        straightToWork: 'none',      ptoUsed: true,  amTransport: 'Shuttle 4',    pmTransport: 'Parent Pick-Up', jobHistory: [] },
+  { id: 's5', name: 'Marcus Webb',   email: 'mwebb@cristoreytc.edu',   role: 'student', grade: 'freshman',  phone: '',             color: COLORS[4], company: 'Greater Chicago Nonprofits', supervisors: [{ id:'sv5a', name:'Rosa Garcia',    email:'rgarcia@gcnonprofit.org',     role:'primary' }],                                                                                                                                      location: 'on-site',        straightToWork: 'none',      ptoUsed: false, amTransport: 'Van 3',        pmTransport: 'Van 3',        jobHistory: [] },
+  { id: 's6', name: 'Aisha Patel',   email: 'apatel@cristoreytc.edu',  role: 'student', grade: 'freshman',  phone: '708-555-0319', color: COLORS[5], company: 'Meridian Capital Finance',    supervisors: [{ id:'sv6a', name:'Michael Lee',    email:'mlee@meridiancap.com',        role:'primary' },{ id:'sv6b', name:'Tanya Rhodes',    email:'trhodes@meridiancap.com',      role:'program-manager' }], location: 'on-site',        straightToWork: 'none',      ptoUsed: false, amTransport: 'Shuttle 2',    pmTransport: 'City Bus',     jobHistory: [] },
+  { id: 's7', name: 'Tyrell Mason',  email: 'tmason@cristoreytc.edu',  role: 'student', grade: 'sophomore', phone: '312-555-0456', color: COLORS[6], company: 'Bright Spark Creative',      supervisors: [{ id:'sv7a', name:'Devon Thomas',   email:'dthomas@brightspark.com',     role:'primary' },{ id:'sv7b', name:'Lena Park',       email:'lpark@brightspark.com',        role:'program-manager' }], location: 'on-site',        straightToWork: 'none',      ptoUsed: false, amTransport: 'Van 2',        pmTransport: 'Van 2',        jobHistory: [] },
+  { id: 's8', name: 'Priya Nair',    email: 'pnair@cristoreytc.edu',   role: 'student', grade: 'sophomore', phone: '773-555-0578', color: COLORS[7], company: 'Studio North Design',        supervisors: [{ id:'sv8a', name:'Sam Wilson',     email:'swilson@studionorth.com',     role:'primary' }],                                                                                                                                      location: 'remote-campus',  straightToWork: 'permanent', ptoUsed: false, amTransport: 'Early Van/Taxi', pmTransport: 'Taxi',         jobHistory: [] },
+];
+
+// ─── HELPERS ───────────────────────────────────────
+function todayISO() { return new Date().toISOString().slice(0,10); }
+function isoToDate(iso) { return new Date(iso + 'T12:00:00'); }
+function formatDateLong(iso) { return isoToDate(iso).toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' }); }
+function formatDateShort(iso) { return isoToDate(iso).toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' }); }
+function formatTime(ts) { if (!ts) return '—'; return new Date(ts).toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit' }); }
+function initials(name) { return name.split(' ').map(p => p[0]).join('').toUpperCase().slice(0,2); }
+function generateCode() { const c = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; let s=''; for(let i=0;i<6;i++) s+=c[Math.floor(Math.random()*c.length)]; return s; }
+function dateStr() { return todayISO(); }
+function getDayEntry(iso) { return DEMO_CALENDAR.find(d => d.date === iso) || null; }
+function getGradeForDay(iso) { const d = getDayEntry(iso); return d ? d.grade : null; }
+function isWorkDay(iso) { const d = getDayEntry(iso); return d && !d.holiday; }
+function studentsForDate(iso) { const g = getGradeForDay(iso); return g ? state.students.filter(s => s.grade === g) : []; }
+function nearestWorkDay() {
+  const t = todayISO(); if (isWorkDay(t)) return t;
+  for (let i=1;i<=7;i++) { const d=new Date(t); d.setDate(d.getDate()-i); const iso=d.toISOString().slice(0,10); if(isWorkDay(iso)) return iso; }
+  return DEMO_CALENDAR.find(d=>!d.holiday)?.date||t;
+}
+function getPrimarySupervisor(s) { return s?.supervisors?.find(sv=>sv.role==='primary') || s?.supervisors?.[0] || null; }
+function getProgramManager(s)    { return s?.supervisors?.find(sv=>sv.role==='program-manager') || null; }
+
+// ═══════════════════════════════════════════════════
+//  STATE
+// ═══════════════════════════════════════════════════
+const state = {
+  user: null, adminTab: 'attendance', viewDate: nearestWorkDay(),
+  attendance: {}, crmActions: {}, locationOverrides: {}, stwOverrides: {}, preloggedAbsences: {}, pmOverrides: {},
+  students: DEMO_USERS.filter(u=>u.role==='student'),
+  dailyCodes: {}, searchQuery: '', modal: null, modalData: {},
+  checkinInput: '', checkinStep: 'code', checkinNotes: '', parentPickup: false,
+  uniformConfirmed: false, noPhoneToday: false, phoneChanged: false, newPhone: '',
+  checkinState: 'idle', checkinMsg: '', isTyping: false,
+  calendarMonth: new Date().getMonth(), calendarYear: new Date().getFullYear(),
+};
+
+// ─── STATE ACCESSORS ───────────────────────────────
+function getStudentRecord(iso,sid)      { return (state.attendance[iso]||{})[sid]||null; }
+function getStudentStatus(iso,sid)      { return getStudentRecord(iso,sid)?.status||'absent'; }
+function getCrmAction(iso,sid)          { return (state.crmActions[iso]||{})[sid]||{}; }
+function getPrelogged(iso,sid)          { return (state.preloggedAbsences[iso]||{})[sid]||null; }
+function getLocationOverride(iso,sid)   { return (state.locationOverrides[iso]||{})[sid]||null; }
+function getStwOverride(iso,sid)        { return (state.stwOverrides[iso]||{})[sid]||null; }
+function getEffectiveLocation(iso,sid)  { return getLocationOverride(iso,sid) || state.students.find(s=>s.id===sid)?.location || 'on-site'; }
+function isEffectivelyStraightToWork(iso,sid) {
+  const s=state.students.find(s=>s.id===sid), o=getStwOverride(iso,sid);
+  if(o==='revoked') return false; if(o==='approved') return true;
+  return s?.straightToWork==='permanent';
+}
+function getEffectivePmTransport(iso,sid) {
+  const rec=getStudentRecord(iso,sid); if(rec?.parentPickup) return 'Parent Pick-Up';
+  return (state.pmOverrides[iso]||{})[sid] || state.students.find(s=>s.id===sid)?.pmTransport || '—';
+}
+function getCheckinDeadline(iso,sid) { return isEffectivelyStraightToWork(iso,sid)?'8:45 AM':'8:00 AM'; }
+function getDailyCode(iso) { return state.dailyCodes[iso]||null; }
+
+// ─── EMAIL TEMPLATE ────────────────────────────────
+function generateEmailTemplate(student, iso, outcomeType, detail) {
+  const date     = formatDateLong(iso);
+  const primary  = getPrimarySupervisor(student);
+  const pm       = getProgramManager(student);
+  const first    = student.name.split(' ')[0];
+  const coord    = state.user?.name || 'CWSP Coordinator';
+  const to       = primary?.email || '';
+  const cc       = pm?.email || '';
+  const greeting = primary?.name ? `Dear ${primary.name.split(' ')[0]},` : 'Dear Work Site Supervisor,';
+  const subjects = {
+    'no-answer':     `CWSP Intern Absent – ${student.name} – ${date}`,
+    'arriving-late': `CWSP Intern Running Late – ${student.name} – ${date}`,
+    'makeup-day':    `CWSP Make-Up Day Notice – ${student.name}`,
+    'pto':           `CWSP Intern PTO – ${student.name} – ${date}`,
+  };
+  const bodies = {
+    'no-answer': `${greeting}\n\nI'm reaching out to let you know that ${student.name} has not checked in for their work study shift today, ${date}. We were unable to reach them by phone.\n\nWe will continue attempting to contact ${first} and their family, and will update you as soon as we have more information.\n\nIf ${first} arrives at your location, please ask them to contact us at Cristo Rey Jesuit High School Twin Cities.\n\nThank you for your understanding and continued partnership with our Corporate Work Study Program.\n\nBest regards,\n${coord}\nCristo Rey Jesuit High School Twin Cities\nCorporate Work Study Program`,
+    'arriving-late': `${greeting}\n\nI wanted to give you a quick heads-up that ${student.name} will be arriving late to your site today, ${date}${detail?` — estimated arrival: ${detail}`:''}.${first} is aware and on their way. We apologize for any inconvenience.\n\nBest regards,\n${coord}\nCristo Rey Jesuit High School Twin Cities\nCorporate Work Study Program`,
+    'makeup-day': `${greeting}\n\nI'm writing to inform you that ${student.name} was absent from their scheduled work study shift. In accordance with our program policy, ${first} will need to complete a make-up day at your site.\n\n${detail?`Reason for absence: ${detail}\n\n`:''}Our team will be in touch to coordinate a mutually convenient make-up date. We appreciate your flexibility.\n\nBest regards,\n${coord}\nCristo Rey Jesuit High School Twin Cities\nCorporate Work Study Program`,
+    'pto': `${greeting}\n\nThis is to let you know that ${student.name} will be using their Paid Time Off (PTO) and will not be at your site today, ${date}${detail?`. Reason: ${detail}`:''}.${first} has one PTO day per semester. We appreciate your understanding.\n\nBest regards,\n${coord}\nCristo Rey Jesuit High School Twin Cities\nCorporate Work Study Program`,
+  };
+  return { to, cc, subject: subjects[outcomeType]||`CWSP Notice – ${student.name} – ${date}`, body: bodies[outcomeType]||'' };
+}
+
+// ═══════════════════════════════════════════════════
+//  RENDER
+// ═══════════════════════════════════════════════════
+function render() {
+  const app = document.getElementById('app');
+  if (!state.user) { app.innerHTML = renderLogin()+renderDemoBar(); attachLoginHandlers(); attachDemoBarHandlers(); return; }
+  app.innerHTML = `<div class="app">${renderHeader()}<main>${renderMain()}</main></div>${state.modal?renderModal():''}${renderDemoBar()}`;
+  attachHandlers(); attachDemoBarHandlers();
+}
+
+// ─── DEMO BAR ──────────────────────────────────────
+function renderDemoBar() {
+  const iso = state.viewDate;
+  const gs  = studentsForDate(iso).slice(0,5);
+  const ce  = getDailyCode(iso);
+  return `<div id="demo-bar" style="position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--navy);color:white;border-radius:100px;padding:8px 8px 8px 16px;display:flex;align-items:center;gap:10px;box-shadow:0 8px 32px rgba(0,0,0,0.35);z-index:9999;font-family:'Open Sans',sans-serif;font-size:0.8rem;white-space:nowrap;max-width:calc(100vw - 32px);overflow-x:auto;">
+    <span style="color:rgba(255,255,255,0.4);font-size:0.7rem;letter-spacing:0.08em;text-transform:uppercase;flex-shrink:0;">🧪 Demo</span>
+    <div style="background:rgba(255,255,255,0.08);border-radius:100px;padding:5px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0;">
+      <span style="color:rgba(255,255,255,0.5);font-size:0.7rem;">Code:</span>
+      ${ce?`<span style="font-family:'Courier New',monospace;font-weight:700;letter-spacing:0.2em;color:#f0a030;">${ce.code}</span>`:`<button id="demo-gen-code" style="background:var(--gold);color:var(--navy);border:none;border-radius:100px;padding:3px 10px;font-size:0.75rem;font-weight:700;cursor:pointer;font-family:'Open Sans',sans-serif;">Generate</button>`}
+      ${ce?`<button id="demo-gen-code" title="New code" style="background:rgba(255,255,255,0.1);color:rgba(255,255,255,0.6);border:none;border-radius:100px;padding:2px 8px;font-size:0.7rem;cursor:pointer;font-family:'Open Sans',sans-serif;">↻</button>`:''}
+    </div>
+    <span style="color:rgba(255,255,255,0.2);">|</span>
+    <span style="color:rgba(255,255,255,0.4);font-size:0.7rem;flex-shrink:0;">Switch:</span>
+    <button class="demo-switch" data-user="admin1" style="background:${state.user?.id==='admin1'?'var(--gold)':'rgba(255,255,255,0.1)'};color:${state.user?.id==='admin1'?'var(--navy)':'white'};border:none;border-radius:100px;padding:5px 12px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:'Open Sans',sans-serif;flex-shrink:0;">🏫 CWSP Admin</button>
+    ${gs.map(s=>{ const rec=getStudentRecord(iso,s.id); const st=rec?.status; const dot=!st||st==='absent'?'🔴':st==='present'?'🟢':'🟡'; const ia=state.user?.id===s.id; return `<button class="demo-switch" data-user="${s.id}" style="background:${ia?s.color:'rgba(255,255,255,0.1)'};color:white;border:none;border-radius:100px;padding:5px 12px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:'Open Sans',sans-serif;flex-shrink:0;">${dot} ${s.name.split(' ')[0]}</button>`; }).join('')}
+  </div>`;
+}
+function typeCode(code) {
+  if(!state.user||state.user.role!=='student') return;
+  const iso=state.viewDate; const rec=getStudentRecord(iso,state.user.id);
+  if(rec&&rec.status!=='absent') return;
+  state.checkinStep='code'; state.checkinInput=''; state.isTyping=true; render();
+  let i=0; const iv=setInterval(()=>{ state.checkinInput+=code[i++]; const inp=document.getElementById('code-input'); if(inp){inp.value=state.checkinInput;inp.style.borderColor='var(--gold)';setTimeout(()=>{if(inp)inp.style.borderColor='';},120);} if(i>=code.length){clearInterval(iv);state.isTyping=false;} },120);
+}
+function attachDemoBarHandlers() {
+  document.getElementById('demo-gen-code')?.addEventListener('click',()=>{ const iso=state.viewDate; const code=generateCode(); state.dailyCodes[iso]={code,generatedAt:Date.now()}; render(); typeCode(code); });
+  document.querySelectorAll('.demo-switch').forEach(btn=>{ btn.addEventListener('click',()=>{ const user=DEMO_USERS.find(u=>u.id===btn.dataset.user); if(!user) return; state.user=user; state.checkinStep='code'; state.checkinInput=''; state.checkinState='idle'; if(user.role==='student'){ const n=DEMO_CALENDAR.filter(d=>!d.holiday&&d.grade===user.grade).sort((a,b)=>Math.abs(new Date(a.date)-new Date())-Math.abs(new Date(b.date)-new Date()))[0]; if(n) state.viewDate=n.date; } render(); const ce=getDailyCode(state.viewDate); if(ce&&user.role==='student'){ const r=getStudentRecord(state.viewDate,user.id); if(!r||r.status==='absent') typeCode(ce.code); } }); });
+}
+
+// ─── LOGIN ─────────────────────────────────────────
+function renderLogin() {
+  return `<div class="login-screen"><div class="login-bg"></div><div class="login-grid"></div>
+  <div class="login-card fade-in">
+    <div class="login-logo">
+      <div style="display:flex;align-items:center;gap:16px;margin-bottom:20px;padding:18px 20px;background:#1e2d4e;border-radius:12px;">
+        <svg width="52" height="52" viewBox="0 0 100 100" fill="none" style="flex-shrink:0;"><circle cx="50" cy="56" r="35" stroke="white" stroke-width="8" fill="none"/><rect x="46" y="21" width="8" height="70" rx="2" fill="white"/><rect x="15" y="52" width="70" height="8" rx="2" fill="white"/><path d="M54 21 L54 52 L85 52 L85 33 L73 42 L65 22 Z" fill="#f0a030"/></svg>
+        <div style="text-align:left;"><div style="font-size:1.1rem;font-weight:700;color:#ffffff;letter-spacing:0.03em;line-height:1.2;font-family:'Open Sans',sans-serif;">Cristo Rey Jesuit</div><div style="font-size:0.78rem;font-weight:400;color:rgba(255,255,255,0.6);margin-top:2px;font-family:'Open Sans',sans-serif;">High School Twin Cities</div></div>
+      </div>
+      <div style="font-size:1.1rem;font-weight:700;color:#1e2d4e;font-family:'Open Sans',sans-serif;margin-bottom:4px;">Work Study Attendance</div>
+      <div style="font-size:0.84rem;color:#6b7280;font-family:'Open Sans',sans-serif;">Corporate Work Study Program</div>
+    </div>
+    <button class="sso-btn" id="btn-google"><svg class="sso-icon" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>Sign in with Google</button>
+    <button class="sso-btn" id="btn-microsoft"><svg class="sso-icon" viewBox="0 0 24 24"><path fill="#f25022" d="M1 1h10v10H1z"/><path fill="#00a4ef" d="M13 1h10v10H13z"/><path fill="#7fba00" d="M1 13h10v10H1z"/><path fill="#ffb900" d="M13 13h10v10H13z"/></svg>Sign in with Microsoft</button>
+    <div class="login-demo">
+      <div class="demo-label">Demo — try each view</div>
+      <div class="demo-users">
+        <button class="demo-user-btn" data-user="admin1" style="border-color:#f0a030;background:#fff8ec;"><div class="role" style="color:#f0a030;">🏫 CWSP ADMIN</div><div class="name">Ms. Rivera</div><div style="font-size:0.68rem;color:#9ca3af;margin-top:2px;">Dashboard &amp; controls</div></button>
+        <button class="demo-user-btn" data-user="s1"><div class="role">🟢 STUDENT VIEW</div><div class="name">Jordan Ellis</div><div style="font-size:0.68rem;color:#9ca3af;margin-top:2px;">Junior · Mon · On-site</div></button>
+      </div>
+    </div>
+  </div>
+  <div style="position:relative;margin-top:1.5rem;text-align:center;"><div style="font-size:0.72rem;color:rgba(255,255,255,0.35);letter-spacing:0.06em;line-height:1.6;">Guided by Faith &nbsp;·&nbsp; Prepared for Life &nbsp;·&nbsp; Always Serving Others</div></div>
+  </div>`;
+}
+function attachLoginHandlers() {
+  document.querySelectorAll('[data-user]').forEach(btn=>{ btn.addEventListener('click',()=>{ const user=DEMO_USERS.find(u=>u.id===btn.dataset.user); if(!user) return; state.user=user; if(user.role==='student'){ const n=DEMO_CALENDAR.filter(d=>!d.holiday&&d.grade===user.grade).sort((a,b)=>Math.abs(new Date(a.date)-new Date())-Math.abs(new Date(b.date)-new Date()))[0]; if(n) state.viewDate=n.date; } render(); }); });
+  document.getElementById('btn-google')?.addEventListener('click',()=>alert('In production this redirects to Google OAuth.\n\nUse demo buttons below.'));
+  document.getElementById('btn-microsoft')?.addEventListener('click',()=>alert('In production this redirects to Microsoft Azure AD.\n\nUse demo buttons below.'));
+}
+
+// ─── HEADER ────────────────────────────────────────
+function renderHeader() {
+  const isAdmin = state.user.role==='admin';
+  const tabs = {attendance:'Attendance',calendar:'Calendar',roster:'Roster',setup:'Setup'};
+  return `<header>
+    <div class="logo">
+      <svg width="38" height="38" viewBox="0 0 100 100" fill="none" style="flex-shrink:0;"><circle cx="50" cy="56" r="35" stroke="white" stroke-width="8" fill="none"/><rect x="46" y="21" width="8" height="70" rx="2" fill="white"/><rect x="15" y="52" width="70" height="8" rx="2" fill="white"/><path d="M54 21 L54 52 L85 52 L85 33 L73 42 L65 22 Z" fill="#f0a030"/></svg>
+      <div><div style="font-size:1rem;font-weight:700;color:#ffffff;letter-spacing:0.04em;line-height:1.15;font-family:'Open Sans',sans-serif;">Cristo Rey Jesuit</div><div style="font-size:0.6rem;color:rgba(255,255,255,0.5);letter-spacing:0.18em;text-transform:uppercase;margin-top:1px;font-family:'Open Sans',sans-serif;">Work Study · Twin Cities</div></div>
+    </div>
+    <div class="header-right">
+      ${isAdmin?`<div class="nav-tabs">${Object.entries(tabs).map(([k,v])=>`<button class="nav-tab ${state.adminTab===k?'active':''}" data-tab="${k}">${v}</button>`).join('')}</div>`:''}
+      <div class="user-pill" id="btn-logout"><div class="avatar ${state.user.role}">${initials(state.user.name)}</div><span class="user-name">${state.user.name}</span></div>
+    </div>
+  </header>`;
+}
+function renderMain() {
+  if(state.user.role==='student') return renderCheckin();
+  if(state.adminTab==='calendar')  return renderCalendar();
+  if(state.adminTab==='roster')    return renderRoster();
+  if(state.adminTab==='setup')     return renderSetup();
+  return renderDashboard();
+}
+
+// ─── STUDENT CHECK-IN ──────────────────────────────
+function renderCheckin() {
+  const iso=state.viewDate, sid=state.user.id;
+  const student=state.students.find(s=>s.id===sid)||state.user;
+  const rec=getStudentRecord(iso,sid);
+  const alreadyIn=rec&&rec.status!=='absent';
+  const stw=isEffectivelyStraightToWork(iso,sid);
+  const loc=getEffectiveLocation(iso,sid);
+  const prelogged=getPrelogged(iso,sid);
+  const codeEntry=getDailyCode(iso);
+  const deadline=getCheckinDeadline(iso,sid);
+  const LOC={'on-site':'On-Site','remote-campus':'Remote on Campus','works-at-school':'Working at School'};
+
+  if(alreadyIn) {
+    const effPm=getEffectivePmTransport(iso,sid);
+    return `<div class="checkin-screen fade-in"><div class="checkin-card">
+      <div class="checkin-header"><div class="checkin-icon success">✅</div><div class="checkin-title">You're checked in!</div><div class="checkin-date">${formatDateLong(iso)}</div></div>
+      <div class="alert alert-success">Marked <strong>${rec.status}</strong> at ${formatTime(rec.checkInTime)}.${rec.uniformViolation?' <strong style="color:#c0392b;">⚠️ Uniform violation noted by CRM.</strong>':rec.uniformConfirmed?' 👔 Uniform confirmed.':''}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:1rem;">
+        <span style="background:#e8f0fe;color:#1a56db;padding:4px 10px;border-radius:6px;font-size:0.78rem;font-weight:600;">📍 ${LOC[loc]||loc}</span>
+        ${stw?'<span style="background:#fef3c7;color:#92400e;padding:4px 10px;border-radius:6px;font-size:0.78rem;font-weight:600;">🚗 Straight-to-Work</span>':''}
+      </div>
+      <div style="background:var(--cream);border-radius:12px;padding:1rem;border:1px solid var(--border);margin-bottom:1rem;">
+        <div style="font-size:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:8px;">Your Transport Today</div>
+        <div style="display:flex;gap:16px;flex-wrap:wrap;">
+          <div><div style="font-size:0.72rem;color:var(--muted);">AM</div><div style="font-weight:600;font-size:0.88rem;color:var(--navy);">${student.amTransport||'—'}</div></div>
+          <div><div style="font-size:0.72rem;color:var(--muted);">PM</div><div style="font-weight:600;font-size:0.88rem;color:${rec.parentPickup?'var(--amber)':'var(--navy)'};">${effPm}</div></div>
+        </div>
+        ${rec.parentPickup?'<div style="font-size:0.75rem;color:var(--amber);margin-top:6px;">🚗 Parent pick-up flagged — PM transport cancelled.</div>':''}
+      </div>
+      ${rec.dailyNote?`<div style="padding:12px 14px;background:var(--cream);border-radius:10px;border:1px solid var(--border);"><div style="font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:4px;">Your note</div><div style="font-size:0.9rem;color:var(--navy);">${rec.dailyNote}</div></div>`:''}
+      <div style="text-align:center;color:var(--muted);font-size:0.82rem;margin-top:1.25rem;">Your coordinator has been notified. Have a great day!</div>
+    </div></div>`;
+  }
+
+  if(stw) return `<div class="checkin-screen fade-in"><div class="checkin-card">
+    <div class="checkin-header"><div class="checkin-icon pending" style="background:#fef3c7;">📸</div><div class="checkin-title">Straight-to-Work</div><div class="checkin-date">${formatDateLong(iso)}</div></div>
+    <div class="alert alert-info">📸 Submit your worksite photo via the <strong>Google Form</strong> by <strong>${deadline}</strong>. Your CRM will approve it here.</div>
+  </div></div>`;
+
+  if(state.checkinStep==='code') return `<div class="checkin-screen fade-in"><div class="checkin-card">
+    <div class="checkin-header"><div class="checkin-icon pending">🕐</div><div class="checkin-title">Good morning, ${state.user.name.split(' ')[0]}!</div><div class="checkin-date">${formatDateLong(iso)}</div><div style="font-size:0.75rem;color:var(--muted);margin-top:2px;">Check-in by <strong>${deadline}</strong> · ${LOC[loc]||loc}</div></div>
+    ${prelogged?`<div class="alert alert-warning">📋 Pre-logged: <strong>${prelogged.type==='pto'?'PTO':'Make-Up Day'}</strong>${prelogged.reason?' — '+prelogged.reason:''}. Still check in to confirm your arrival.</div>`:''}
+    ${state.checkinState==='error'?`<div class="alert alert-error">❌ ${state.checkinMsg}</div>`:''}
+    <div class="alert alert-info">🖥️ Enter the <strong>daily code</strong> displayed on the screen in your room.</div>
+    <div class="code-input-group"><label class="code-label">Daily Room Code</label>
+      <input type="text" id="code-input" class="code-input ${state.checkinState==='error'?'error':''}" placeholder="_ _ _ _ _ _" maxlength="6" value="${state.checkinInput}" autocomplete="off" autocorrect="off" spellcheck="false" />
+    </div>
+    <button class="btn btn-primary" id="btn-checkin">Continue →</button>
+    ${codeEntry?`<div style="margin-top:1.5rem;padding:10px 14px;background:#f3f4f6;border-radius:8px;text-align:center;border:1px dashed #d1d5db;"><div style="font-size:0.7rem;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:4px;">🧪 Demo Mode — Today's Code</div><div style="font-family:'Courier New',monospace;font-size:1.3rem;font-weight:700;letter-spacing:0.3em;color:var(--navy);">${codeEntry.code}</div></div>`:`<div style="margin-top:1.5rem;padding:10px 14px;background:#f3f4f6;border-radius:8px;text-align:center;border:1px dashed #d1d5db;"><div style="font-size:0.78rem;color:var(--muted);">🧪 Demo Mode — No code yet.<br>Switch to <strong>Admin</strong> to generate one.</div></div>`}
+  </div></div>`;
+
+  return `<div class="checkin-screen fade-in"><div class="checkin-card">
+    <div class="checkin-header"><div class="checkin-icon" style="background:#e8faf0;font-size:24px;">🗒️</div><div class="checkin-title">Almost done!</div><div class="checkin-date">A couple quick things before you start your day</div></div>
+
+    <div style="margin-bottom:1.25rem;">
+      <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;background:${state.uniformConfirmed?'#e8faf0':'var(--cream)'};border:2px solid ${state.uniformConfirmed?'#16a085':'var(--border)'};border-radius:12px;padding:1rem;transition:all 0.2s;">
+        <input type="checkbox" id="uniform-confirmed" ${state.uniformConfirmed?'checked':''} style="width:18px;height:18px;margin-top:1px;accent-color:#16a085;cursor:pointer;flex-shrink:0;" />
+        <div><div style="font-size:0.9rem;font-weight:600;color:${state.uniformConfirmed?'#16a085':'var(--navy)'};">👔 I am in proper uniform today</div>
+        <div style="font-size:0.78rem;color:var(--muted);margin-top:2px;">CRJ Uniform Guidelines: Approved Shoes, Pants, Uniform Top, Tie if Required</div></div>
+      </label>
+    </div>
+
+    <div style="background:var(--cream);border-radius:12px;padding:1rem;margin-bottom:1.25rem;border:1px solid var(--border);">
+      <div style="font-size:0.82rem;font-weight:600;color:var(--navy);margin-bottom:6px;">🚌 PM Transport</div>
+      <div style="font-size:0.8rem;color:var(--muted);margin-bottom:10px;">On file: <strong style="color:var(--navy);">${student.pmTransport||'—'}</strong></div>
+      <label style="display:flex;align-items:flex-start;gap:12px;cursor:pointer;background:${state.parentPickup?'#fff8e6':'white'};border:2px solid ${state.parentPickup?'var(--gold)':'var(--border)'};border-radius:10px;padding:0.75rem;transition:all 0.2s;">
+        <input type="checkbox" id="parent-pickup" ${state.parentPickup?'checked':''} style="width:18px;height:18px;margin-top:1px;accent-color:var(--navy);cursor:pointer;flex-shrink:0;" />
+        <div><div style="font-size:0.88rem;font-weight:600;color:var(--navy);">🚗 Parent Pick-Up Today</div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-top:1px;">Override my PM transport — parent / guardian is picking me up</div></div>
+      </label>
+    </div>
+
+    <div style="margin-bottom:1.25rem;">
+      <label class="code-label" style="margin-bottom:6px;display:block;">📝 Notes for today <span style="font-weight:400;text-transform:none;letter-spacing:0;color:var(--muted);font-size:0.75rem;">— optional</span></label>
+      <textarea id="checkin-notes" rows="2" placeholder="e.g. Early pickup at 3pm · Bringing laptop"
+        style="width:100%;padding:12px;border:2px solid var(--border);border-radius:var(--radius);font-family:'Open Sans',sans-serif;font-size:0.875rem;resize:vertical;outline:none;transition:border-color 0.2s;color:var(--navy);background:white;"
+        onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--border)'"
+      >${state.checkinNotes}</textarea>
+
+```
+</div>
+
+<div style="background:var(--cream);border-radius:12px;padding:1rem;margin-bottom:1.25rem;border:1px solid var(--border);">
+  <div style="font-size:0.82rem;font-weight:600;color:var(--navy);margin-bottom:2px;">📱 Cell phone number</div>
+  ${student.phone?`<div style="font-size:0.8rem;color:var(--muted);margin-bottom:10px;">On file: <strong style="color:var(--navy);">${student.phone}</strong></div>`:`<div style="font-size:0.8rem;color:var(--amber);margin-bottom:10px;">⚠️ No number on file yet</div>`}
+  <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:8px;">
+    <input type="checkbox" id="no-phone-today" ${state.noPhoneToday?'checked':''} style="width:16px;height:16px;accent-color:var(--navy);cursor:pointer;" />
+    <span style="font-size:0.85rem;color:var(--text);">I do not have a cell phone today</span>
+  </label>
+  ${!state.noPhoneToday?`
+  <label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:${state.phoneChanged?'10px':'0'};">
+    <input type="checkbox" id="phone-changed" ${state.phoneChanged?'checked':''} style="width:16px;height:16px;accent-color:var(--navy);cursor:pointer;" />
+    <span style="font-size:0.85rem;color:var(--text);">${student.phone?'My number has changed':'Add my number'}</span>
+  </label>
+  ${state.phoneChanged?`<input type="tel" id="new-phone" placeholder="e.g. 312-555-0100" value="${state.newPhone}" style="width:100%;padding:10px 12px;border:2px solid var(--border);border-radius:8px;font-family:'Open Sans',sans-serif;font-size:0.9rem;outline:none;margin-top:2px;transition:border-color 0.2s;color:var(--navy);background:white;" onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--border)'" />`:''}
+  `:''}
+</div>
+
+${!state.uniformConfirmed?`<div class="alert alert-warning" style="margin-bottom:1rem;">👔 Please confirm your uniform before completing check-in.</div>`:''}
+<button class="btn btn-primary" id="btn-submit-details" ${!state.uniformConfirmed?'disabled style="opacity:0.5;cursor:not-allowed;"':''}>Complete Check-In ✓</button>
+```
+
+  </div></div>`;
+}
+
+// ─── ADMIN DASHBOARD ───────────────────────────────
+function renderDashboard() {
+const iso=state.viewDate, dayEntry=getDayEntry(iso), todayStudents=studentsForDate(iso), ce=getDailyCode(iso);
+const present=todayStudents.filter(s=>getStudentStatus(iso,s.id)===‘present’).length;
+const late   =todayStudents.filter(s=>getStudentStatus(iso,s.id)===‘late’).length;
+const absent =todayStudents.filter(s=>getStudentStatus(iso,s.id)===‘absent’).length;
+const total  =todayStudents.length;
+const filtered=todayStudents.filter(s=>!state.searchQuery||s.name.toLowerCase().includes(state.searchQuery.toLowerCase())||s.company?.toLowerCase().includes(state.searchQuery.toLowerCase()));
+const allWD=DEMO_CALENDAR.filter(d=>!d.holiday).map(d=>d.date);
+const idx=allWD.indexOf(iso), prevDay=idx>0?allWD[idx-1]:null, nextDay=idx<allWD.length-1?allWD[idx+1]:null;
+const isToday=iso===todayISO();
+const CRM_OPTS=[{value:’’,label:‘Select outcome…’},{value:‘no-answer’,label:‘CRM Called — No Answer, Call Home’},{value:‘arriving-late’,label:‘CRM Called — Arriving Late’},{value:‘makeup-day’,label:‘CRM Called — Make-Up Day’},{value:‘pto’,label:‘CRM Called — Taking PTO’}];
+const AC={  ‘no-answer’:{bg:’#fff4ec’,border:’#fed7aa’,text:’#9a3412’},‘arriving-late’:{bg:’#fefce8’,border:’#fde68a’,text:’#854d0e’},‘makeup-day’:{bg:’#f0fdf4’,border:’#bbf7d0’,text:’#14532d’},‘pto’:{bg:’#f0f9ff’,border:’#bae6fd’,text:’#0c4a6e’}};
+const CB={‘no-answer’:{icon:‘📵’,text:‘No Answer — Call Home’,color:’#9a3412’,bg:’#fff4ec’},‘arriving-late’:{icon:‘🕐’,text:‘Arriving Late’,color:’#854d0e’,bg:’#fefce8’},‘makeup-day’:{icon:‘📅’,text:‘Make-Up Day’,color:’#14532d’,bg:’#f0fdf4’},‘pto’:{icon:‘🏖’,text:‘PTO’,color:’#0c4a6e’,bg:’#f0f9ff’}};
+const LL={‘on-site’:‘On-Site’,‘remote-campus’:‘Remote’,‘works-at-school’:‘School’};
+const LC={‘on-site’:’#1e2d4e’,‘remote-campus’:’#1a56db’,‘works-at-school’:’#6b7280’};
+const LB={‘on-site’:’#e8f0fe’,‘remote-campus’:’#dbeafe’,‘works-at-school’:’#f3f4f6’};
+const notIn=todayStudents.filter(s=>!getStudentRecord(iso,s.id)||getStudentRecord(iso,s.id).status===‘absent’);
+const stwPending=todayStudents.filter(s=>isEffectivelyStraightToWork(iso,s.id)&&!getStudentRecord(iso,s.id));
+const notInFiltered=notIn.filter(s=>!isEffectivelyStraightToWork(iso,s.id));
+
+return `<div class="fade-in">
+
+  <!-- Date nav -->
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:12px;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button id="btn-prev-day" ${!prevDay?'disabled':''} style="padding:6px 12px;border:1.5px solid var(--border);border-radius:8px;background:white;cursor:${prevDay?'pointer':'default'};color:${prevDay?'var(--navy)':'#d1d5db'};font-family:'Open Sans',sans-serif;font-size:0.82rem;">← Prev</button>
+      <div style="text-align:center;"><div style="font-weight:700;font-size:1.1rem;color:var(--navy);">${formatDateLong(iso)}</div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-top:2px;">${dayEntry?`<span style="background:var(--gold-pale);color:var(--amber);padding:2px 8px;border-radius:100px;font-weight:600;text-transform:capitalize;">${dayEntry.grade}s</span>`:''} ${isToday?'<span style="color:#16a085;font-weight:600;">· Today</span>':''}</div>
+      </div>
+      <button id="btn-next-day" ${!nextDay?'disabled':''} style="padding:6px 12px;border:1.5px solid var(--border);border-radius:8px;background:white;cursor:${nextDay?'pointer':'default'};color:${nextDay?'var(--navy)':'#d1d5db'};font-family:'Open Sans',sans-serif;font-size:0.82rem;">Next →</button>
+      ${!isToday?`<button id="btn-today" style="padding:6px 12px;border:1.5px solid var(--gold);border-radius:8px;background:var(--gold-pale);cursor:pointer;color:var(--amber);font-family:'Open Sans',sans-serif;font-size:0.8rem;font-weight:600;">Today</button>`:''}
+    </div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-outline btn-sm" id="btn-export">⬇ Export CSV</button>
+      <button class="btn btn-outline btn-sm" id="btn-prelog" style="border-color:var(--navy);color:var(--navy);">📋 Pre-log Absence</button>
+    </div>
+  </div>
+
+  <!-- Stats -->
+
+  <div class="stats-grid" style="margin-bottom:1.5rem;">
+    <div class="stat-card present"><div class="stat-number">${present}</div><div class="stat-label">Present</div></div>
+    <div class="stat-card late"><div class="stat-number">${late}</div><div class="stat-label">Late</div></div>
+    <div class="stat-card absent"><div class="stat-number">${absent}</div><div class="stat-label">Not In</div></div>
+    <div class="stat-card"><div class="stat-number">${total}</div><div class="stat-label">Total</div></div>
+  </div>
+
+  <!-- STW Panel -->
+
+${stwPending.length?`<div style="background:white;border-radius:16px;border:2px solid #fef3c7;margin-bottom:1.5rem;overflow:hidden;"> <div style="background:#fef3c7;padding:12px 20px;display:flex;align-items:center;gap:10px;"><span style="font-size:1.1rem;">📸</span> <div><div style="font-weight:700;font-size:0.9rem;color:#92400e;">Straight-to-Work — Awaiting Photo Approval (${stwPending.length})</div><div style="font-size:0.73rem;color:#b45309;">Deadline 8:45 AM · Approve as photos arrive</div></div></div> ${stwPending.map(s=>{ const p=getPrimarySupervisor(s); return `<div style="padding:12px 20px;border-bottom:1px solid #f3f4f6;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+<div style="display:flex;align-items:center;gap:10px;"><div class="student-avatar" style="background:${s.color};width:34px;height:34px;font-size:12px;">${initials(s.name)}</div>
+<div><div style="font-weight:600;font-size:0.9rem;color:var(--navy);">${s.name}</div><div style="font-size:0.78rem;color:var(--muted);">${s.company||’’} ${p?’· ‘+p.name:’’}</div></div>
+</div>
+<div style="display:flex;gap:8px;">
+<button class="btn-stw-approve" data-sid="${s.id}" style="padding:6px 14px;background:#16a085;color:white;border:none;border-radius:8px;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:'Open Sans',sans-serif;">✓ Approve</button>
+<button class="btn-stw-late" data-sid="${s.id}" style="padding:6px 14px;background:#fff8e6;color:#b45309;border:1.5px solid #fde68a;border-radius:8px;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:'Open Sans',sans-serif;">Late / No Photo</button>
+</div></div>`; }).join(’’)}
+
+  </div>`:''}
+
+  <!-- CRM Panel -->
+
+${notInFiltered.length?`<div style="background:white;border-radius:16px;border:2px solid #fde8e8;margin-bottom:1.5rem;overflow:hidden;"> <div style="background:#fde8e8;padding:12px 20px;display:flex;align-items:center;gap:10px;"><span style="font-size:1.1rem;">📞</span> <div><div style="font-weight:700;font-size:0.9rem;color:#c0392b;">Not Checked In — ${notInFiltered.length} student${notInFiltered.length!==1?'s':''}</div><div style="font-size:0.73rem;color:#e05252;">Log outcome · Use 📧 to draft supervisor email</div></div></div> ${notInFiltered.map(s=>{ const crm=getCrmAction(iso,s.id),ac=AC[crm.action]||{},pl=getPrelogged(iso,s.id),primary=getPrimarySupervisor(s),pm=getProgramManager(s),cb=crm.action?CB[crm.action]:null; return `
+<div style="padding:14px 20px;border-bottom:1px solid #f3f4f6;">
+<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px;">
+<div style="display:flex;align-items:center;gap:10px;"><div class="student-avatar" style="background:${s.color};width:34px;height:34px;font-size:12px;flex-shrink:0;">${initials(s.name)}</div>
+<div><div style="font-weight:600;font-size:0.9rem;color:var(--navy);">${s.name} ${!s.ptoUsed?’<span style="font-size:0.7rem;background:#dcfce7;color:#15803d;padding:1px 6px;border-radius:100px;margin-left:4px;font-weight:600;">PTO avail</span>’:’<span style="font-size:0.7rem;background:#fee2e2;color:#991b1b;padding:1px 6px;border-radius:100px;margin-left:4px;font-weight:600;">PTO used</span>’}</div>
+<div style="font-size:0.78rem;color:var(--muted);">${s.company||’’}</div>
+<div style="font-size:0.78rem;color:${s.phone?'#0e7a5a':'var(--muted)'};">${s.phone?`📱 <a href="tel:${s.phone}" style="color:#0e7a5a;text-decoration:none;font-weight:600;">${s.phone}</a>`:‘⚠️ No number on file’}</div>
+${primary?`<div style="font-size:0.75rem;color:var(--muted);margin-top:2px;">Supervisor: <strong>${primary.name}</strong> — <a href="mailto:${primary.email}" style="color:var(--navy);text-decoration:none;">${primary.email}</a></div>`:’’}
+${pm?`<div style="font-size:0.75rem;color:var(--muted);">Program Mgr: ${pm.name}</div>`:’’}
+${pl?`<div style="font-size:0.72rem;background:#f0f9ff;color:#0c4a6e;padding:2px 7px;border-radius:6px;margin-top:3px;display:inline-block;">📋 Pre-logged: ${pl.type==='pto'?'PTO':'Make-Up Day'}${pl.reason?' — '+pl.reason:''}</div>`:’’}
+</div>
+</div>
+</div>
+<div style="display:flex;flex-direction:column;gap:8px;">
+<div style="display:flex;gap:8px;align-items:center;">
+<select class="crm-action-select" data-crm="${s.id}" style="flex:1;padding:8px 10px;border:1.5px solid ${crm.action?ac.border:'var(--border)'};border-radius:8px;font-size:0.82rem;font-family:'Open Sans',sans-serif;color:${crm.action?ac.text:'var(--text)'};background:${crm.action?ac.bg:'white'};cursor:pointer;outline:none;">
+${CRM_OPTS.map(o=>`<option value="${o.value}" ${crm.action===o.value?'selected':''}>${o.label}</option>`).join(’’)}
+</select>
+${crm.action?`<button class="btn-draft-email" data-sid="${s.id}" style="padding:7px 12px;background:#e8f0fe;color:#1a56db;border:1.5px solid #c7d9fc;border-radius:8px;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:'Open Sans',sans-serif;white-space:nowrap;flex-shrink:0;">📧 Draft Email</button>`:’’}
+</div>
+${crm.action===‘arriving-late’?`<div style="display:flex;align-items:center;gap:8px;"><label style="font-size:0.78rem;color:var(--muted);white-space:nowrap;flex-shrink:0;">Est. arrival:</label><input type="text" class="crm-field" data-crm-field="${s.id}" data-field="eta" placeholder="e.g. 8:45 AM" value="${crm.eta||''}" style="flex:1;padding:7px 10px;border:1.5px solid #fde68a;border-radius:8px;font-size:0.82rem;font-family:'Open Sans',sans-serif;outline:none;background:#fefce8;color:#854d0e;" /></div>`:’’}
+${crm.action===‘makeup-day’?`<div style="display:flex;flex-direction:column;gap:6px;"><div style="display:flex;align-items:center;gap:8px;"><label style="font-size:0.78rem;color:var(--muted);white-space:nowrap;flex-shrink:0;">Reason:</label><input type="text" class="crm-field" data-crm-field="${s.id}" data-field="reason" placeholder="e.g. Missed 1/14 due to illness" value="${crm.reason||''}" style="flex:1;padding:7px 10px;border:1.5px solid #bbf7d0;border-radius:8px;font-size:0.82rem;font-family:'Open Sans',sans-serif;outline:none;background:#f0fdf4;color:#14532d;" /></div><div style="font-size:0.76rem;background:#fef3c7;color:#92400e;padding:5px 10px;border-radius:6px;font-weight:600;">📋 Flag for Salesforce: Generate Make-Up Day form &amp; send to supervisor</div></div>`:’’}
+${crm.action===‘pto’?`<div style="display:flex;flex-direction:column;gap:6px;"><div style="display:flex;align-items:center;gap:8px;"><label style="font-size:0.78rem;color:var(--muted);white-space:nowrap;flex-shrink:0;">Reason:</label><input type="text" class="crm-field" data-crm-field="${s.id}" data-field="reason" placeholder="e.g. Medical appointment" value="${crm.reason||''}" style="flex:1;padding:7px 10px;border:1.5px solid #bae6fd;border-radius:8px;font-size:0.82rem;font-family:'Open Sans',sans-serif;outline:none;background:#f0f9ff;color:#0c4a6e;" /></div>${!s.ptoUsed?`<button class="btn-apply-pto" data-sid="${s.id}" style="align-self:flex-start;padding:5px 12px;background:#0c4a6e;color:white;border:none;border-radius:7px;font-size:0.78rem;font-weight:600;cursor:pointer;font-family:'Open Sans',sans-serif;">Apply PTO for Semester</button>`:`<div style="font-size:0.76rem;background:#fee2e2;color:#991b1b;padding:4px 8px;border-radius:6px;font-weight:600;">⚠️ PTO already used this semester — needs Make-Up Day in Salesforce</div>`}</div>`:’’}
+</div>
+</div>`; }).join(’’)}
+
+  </div>`:(!notInFiltered.length&&!stwPending.length?`<div class="alert alert-success" style="margin-bottom:1.5rem;">🎉 All interns are accounted for today!</div>`:'')}
+
+  <!-- Daily Code -->
+
+  <div class="code-gen-section">
+    <div class="section-title">Daily Check-In Code</div>
+    <div class="section-sub">Generate each morning — display on room screen, do not share digitally.</div>
+    <div class="code-gen-row">
+      <div class="generated-code">${ce?ce.code:'——————'}</div>
+      <button class="btn btn-gold btn-sm" id="btn-gen-code" style="white-space:nowrap">${ce?'🔄 New Code':'✨ Generate Code'}</button>
+      ${ce?`<button class="btn btn-outline btn-sm" id="btn-display-code">🖥 Display Mode</button>`:''}
+      ${ce?`<span style="font-size:0.78rem;color:var(--muted)">Generated at ${formatTime(ce.generatedAt)}</span>`:''}
+    </div>
+  </div>
+
+  <!-- Attendance Table -->
+
+  <div class="table-card">
+    <div class="table-header">
+      <div class="table-title">Today's Roster <span style="font-size:0.75rem;font-weight:400;color:var(--muted);margin-left:8px;text-transform:capitalize;">${dayEntry?.grade||''}s · ${formatDateShort(iso)}</span></div>
+      <input type="text" class="search-input" id="search-input" placeholder="Search student or company…" value="${state.searchQuery}" />
+    </div>
+    <table>
+      <thead><tr><th>Student</th><th>Company / Supervisor</th><th>Status</th><th>Location</th><th>Transport</th><th>Check-in</th><th>Uniform</th><th>CRM</th></tr></thead>
+      <tbody>
+        ${filtered.map(s=>{ const rec=getStudentRecord(iso,s.id)||{},status=rec.status||'absent',loc=getEffectiveLocation(iso,s.id),stw=isEffectivelyStraightToWork(iso,s.id),pl=getPrelogged(iso,s.id),crm=getCrmAction(iso,s.id),cb=crm.action?CB[crm.action]:null,cd=crm.eta||crm.reason||'',primary=getPrimarySupervisor(s),effPm=getEffectivePmTransport(iso,s.id); return `
+        <tr>
+          <td><div class="student-cell"><div class="student-avatar" style="background:${s.color}">${initials(s.name)}</div>
+            <div><div class="student-name">${s.name}</div><div class="student-email">${s.email}</div>${stw?'<div style="font-size:0.68rem;color:#92400e;font-weight:600;">🚗 Straight-to-Work</div>':''}${pl?`<div style="font-size:0.68rem;color:#0c4a6e;font-weight:600;">📋 ${pl.type==='pto'?'PTO':'Make-Up'} pre-logged</div>`:''}
+            </div></div></td>
+          <td style="font-size:0.8rem;max-width:160px;"><div style="font-weight:600;color:var(--navy);">${s.company||'—'}</div>${primary?`<div style="color:var(--muted);font-size:0.75rem;">${primary.name}</div>`:''}${(s.supervisors||[]).filter(sv=>sv.role!=='primary').map(sv=>`<div style="font-size:0.68rem;color:${sv.role==='program-manager'?'#1a56db':'var(--muted)'};">${sv.role==='program-manager'?'📌 ':''}${sv.name}</div>`).join('')}</td>
+          <td><select class="status-select" data-student="${s.id}"><option value="present" ${status==='present'?'selected':''}>✅ Present</option><option value="late" ${status==='late'?'selected':''}>⏰ Late</option><option value="absent" ${status==='absent'?'selected':''}>❌ Absent</option></select>${rec.arrivedWhileCalling?'<div style="font-size:0.68rem;color:#b45309;margin-top:3px;white-space:nowrap;">📞 arrived while calling</div>':''}</td>
+          <td><div style="display:flex;flex-direction:column;gap:4px;"><span style="font-size:0.75rem;font-weight:600;color:${LC[loc]};background:${LB[loc]};padding:3px 8px;border-radius:6px;white-space:nowrap;">${LL[loc]||loc}</span>
+            <select class="loc-override-select" data-locstudent="${s.id}" style="font-size:0.72rem;padding:3px 6px;border:1px solid var(--border);border-radius:6px;cursor:pointer;outline:none;color:var(--muted);background:white;font-family:'Open Sans',sans-serif;">
+              <option value="">Override…</option><option value="on-site" ${getLocationOverride(iso,s.id)==='on-site'?'selected':''}>On-Site</option><option value="remote-campus" ${getLocationOverride(iso,s.id)==='remote-campus'?'selected':''}>Remote on Campus</option><option value="works-at-school" ${getLocationOverride(iso,s.id)==='works-at-school'?'selected':''}>Works at School</option><option value="clear">— Clear Override</option>
+            </select></div></td>
+          <td style="font-size:0.8rem;"><div style="display:flex;flex-direction:column;gap:3px;"><span style="font-size:0.72rem;color:var(--muted);">AM: <strong style="color:var(--navy);">${s.amTransport||'—'}</strong></span><span style="font-size:0.72rem;color:var(--muted);">PM: <strong style="color:${rec.parentPickup?'var(--amber)':'var(--navy)'};">${effPm}</strong></span></div></td>
+          <td class="time-cell">${formatTime(rec.checkInTime)}</td>
+          <td style="text-align:center;">${rec.uniformViolation?`<span title="Violation flagged — click to clear" style="font-size:1rem;cursor:pointer;" class="btn-toggle-uniform" data-sid="${s.id}">⚠️</span>`:rec.uniformConfirmed?`<span title="Confirmed ✓ — click to flag violation" style="font-size:0.9rem;cursor:pointer;color:#16a085;" class="btn-toggle-uniform" data-sid="${s.id}">✓</span>`:`<span title="Not confirmed — click to flag" style="color:#d1d5db;font-size:0.75rem;cursor:pointer;" class="btn-toggle-uniform" data-sid="${s.id}">—</span>`}</td>
+          <td style="max-width:170px;">${cb?`<span style="display:inline-flex;align-items:center;gap:4px;font-size:0.75rem;font-weight:600;color:${cb.color};background:${cb.bg};padding:3px 8px;border-radius:6px;line-height:1.4;">${cb.icon} ${cb.text}${cd?' · '+cd:''}</span>`:'<span style="color:#d1d5db;font-size:0.75rem;">—</span>'}${s.ptoUsed&&crm.action==='pto'?'<div style="font-size:0.68rem;color:#991b1b;font-weight:600;margin-top:3px;">⚠️ Needs Salesforce Make-Up</div>':''}</td>
+        </tr>`; }).join('')}
+      </tbody>
+    </table>
+  </div>
+  </div>`;
+}
+
+// ─── CALENDAR ──────────────────────────────────────
+function renderCalendar() {
+const yr=state.calendarYear, mo=state.calendarMonth;
+const mn=new Date(yr,mo,1).toLocaleDateString(‘en-US’,{month:‘long’,year:‘numeric’});
+const wdtm=DEMO_CALENDAR.filter(d=>{ const dt=isoToDate(d.date); return dt.getFullYear()===yr&&dt.getMonth()===mo; });
+const fd=new Date(yr,mo,1).getDay(), dim=new Date(yr,mo+1,0).getDate();
+const GC={junior:’#2980b9’,senior:’#8e44ad’,freshman:’#16a085’,sophomore:’#d35400’};
+const GB={junior:’#dbeafe’,senior:’#ede9fe’,freshman:’#d1fae5’,sophomore:’#ffedd5’};
+const cells=[]; for(let i=0;i<fd;i++) cells.push(’<div></div>’);
+for(let day=1;day<=dim;day++){
+const iso=`${yr}-${String(mo+1).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+const en=getDayEntry(iso),isT=iso===todayISO(),isV=iso===state.viewDate,isWE=[0,6].includes(new Date(iso+‘T12:00:00’).getDay());
+let ct=’’,bg=‘white’,bd=‘1px solid #f3f4f6’,cu=‘default’;
+if(isWE){bg=’#fafafa’;}
+else if(en&&!en.holiday){cu=‘pointer’;const g=en.grade,ds=studentsForDate(iso),pr=ds.filter(s=>getStudentStatus(iso,s.id)===‘present’).length,la=ds.filter(s=>getStudentStatus(iso,s.id)===‘late’).length,tot=ds.length,ab=tot-pr-la,hd=pr+la>0,pl=state.preloggedAbsences[iso]?Object.keys(state.preloggedAbsences[iso]).length:0;
+ct=`<div style="font-size:0.65rem;font-weight:700;color:${GC[g]};background:${GB[g]};padding:1px 5px;border-radius:100px;display:inline-block;margin-bottom:3px;text-transform:capitalize;">${g.slice(0,2).toUpperCase()}</div>${hd?`<div style="display:flex;gap:2px;margin-top:2px;">${pr>0?`<span style="width:${Math.round(pr/tot*100)}%;min-width:4px;height:4px;background:#16a085;border-radius:2px;display:inline-block;"></span>`:’’}${la>0?`<span style="width:${Math.round(la/tot*100)}%;min-width:4px;height:4px;background:#f0a030;border-radius:2px;display:inline-block;"></span>`:’’}${ab>0?`<span style="width:${Math.round(ab/tot*100)}%;min-width:4px;height:4px;background:#e74c3c;border-radius:2px;display:inline-block;"></span>`:’’}”></div><div style="font-size:0.6rem;color:var(--muted);margin-top:2px;">${pr+la}/${tot}</div>`:''} ${pl>0?`<div style="font-size:0.6rem;color:#0c4a6e;margin-top:1px;">📋 ${pl}</div>`:''}`;
+} else if(en&&en.holiday){bg=’#f9fafb’;ct=’<div style="font-size:0.6rem;color:#d1d5db;margin-top:4px;">Holiday</div>’;}
+if(isV) bd=‘2px solid var(–navy)’; if(isT) bg=’#fff8ec’;
+cells.push(`<div class="cal-day" data-date="${iso}" style="background:${bg};border:${bd};border-radius:8px;padding:6px 8px;cursor:${cu};min-height:64px;${isT?'box-shadow:0 0 0 1px var(--gold);':''}"><div style="font-size:0.82rem;font-weight:${isT?'700':'500'};color:${isT?'var(--amber)':isWE?'#d1d5db':'var(--text)'};">${day}</div>${ct}</div>`);
+}
+return `<div class="fade-in">
+
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;flex-wrap:wrap;gap:12px;"><div><div class="page-title">Attendance Calendar</div><div class="page-subtitle">Click any work day to navigate to it</div></div></div>
+  <div style="display:flex;align-items:center;gap:16px;margin-bottom:1rem;">
+    <button id="btn-prev-month" style="padding:6px 14px;border:1.5px solid var(--border);border-radius:8px;background:white;cursor:pointer;font-family:'Open Sans',sans-serif;font-size:0.85rem;color:var(--navy);">← Prev</button>
+    <div style="font-weight:700;font-size:1.1rem;color:var(--navy);min-width:180px;text-align:center;">${mn}</div>
+    <button id="btn-next-month" style="padding:6px 14px;border:1.5px solid var(--border);border-radius:8px;background:white;cursor:pointer;font-family:'Open Sans',sans-serif;font-size:0.85rem;color:var(--navy);">Next →</button>
+  </div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-bottom:1rem;font-size:0.75rem;">${Object.entries(GC).map(([g,c])=>`<span style="display:flex;align-items:center;gap:4px;"><span style="width:10px;height:10px;border-radius:50%;background:${c};display:inline-block;"></span><span style="text-transform:capitalize;color:var(--muted);">${g}s — ${GRADE_DAYS[g]}</span></span>`).join('')}</div>
+  <div style="background:white;border-radius:16px;border:1px solid var(--border);overflow:hidden;padding:1rem;">
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:6px;">${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].map(d=>`<div style="text-align:center;font-size:0.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em;padding:4px;">${d}</div>`).join('')}</div>
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:4px;">${cells.join('')}</div>
+  </div>
+  ${(()=>{const pl=[];wdtm.forEach(d=>{if(state.preloggedAbsences[d.date]) Object.entries(state.preloggedAbsences[d.date]).forEach(([sid,p])=>{ const st=state.students.find(s=>s.id===sid); if(st) pl.push({date:d.date,student:st,pl:p}); });});if(!pl.length) return '';
+  return `<div style="margin-top:1.5rem;background:white;border-radius:16px;border:1px solid var(--border);overflow:hidden;"><div style="padding:12px 20px;border-bottom:1px solid var(--border);font-weight:600;font-size:0.9rem;color:var(--navy);">📋 Pre-logged Absences This Month</div><table style="width:100%;border-collapse:collapse;"><thead><tr>${['Date','Student','Type','Reason','Action'].map(h=>`<th style="padding:8px 16px;text-align:left;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);background:#fafafa;border-bottom:1px solid var(--border);">${h}</th>`).join('')}</tr></thead><tbody>
+  ${pl.map(({date,student,pl})=>`<tr style="border-bottom:1px solid #f3f4f6;"><td style="padding:10px 16px;font-size:0.82rem;color:var(--navy);font-weight:600;">${formatDateShort(date)}</td><td style="padding:10px 16px;"><div style="display:flex;align-items:center;gap:8px;"><div style="width:26px;height:26px;border-radius:50%;background:${student.color};display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;">${initials(student.name)}</div><span style="font-size:0.85rem;font-weight:600;color:var(--navy);">${student.name}</span></div></td><td style="padding:10px 16px;"><span style="font-size:0.78rem;font-weight:600;padding:3px 8px;border-radius:6px;${pl.type==='pto'?'background:#f0f9ff;color:#0c4a6e;':'background:#f0fdf4;color:#14532d;'}">${pl.type==='pto'?'🏖 PTO':'📅 Make-Up Day'}</span></td><td style="padding:10px 16px;font-size:0.82rem;color:var(--muted);">${pl.reason||'—'}</td><td style="padding:10px 16px;"><button class="btn-remove-prelog" data-date="${date}" data-sid="${student.id}" style="padding:4px 10px;background:#fdecea;color:var(--red);border:none;border-radius:6px;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:'Open Sans',sans-serif;">Remove</button></td></tr>`).join('')}
+  </tbody></table></div>`; })()}
+  </div>`;
+}
+
+// ─── ROSTER ────────────────────────────────────────
+function renderRoster() {
+const LL={‘on-site’:‘On-Site’,‘remote-campus’:‘Remote on Campus’,‘works-at-school’:‘Works at School’};
+const SL={‘none’:’—’,‘permanent’:‘✓ Agreement on file’};
+const GD={junior:‘Mon’,senior:‘Tue’,freshman:‘Wed’,sophomore:‘Thu’};
+return `<div class="fade-in">
+
+  <div class="dashboard-header">
+    <div><div class="page-title">Intern Roster</div><div class="page-subtitle">Manage students, companies, supervisors, and transport plans</div></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-outline btn-sm" id="btn-import-roster">⬆ Import CSV</button>
+      <button class="btn btn-outline btn-sm" id="btn-export-vcf">📇 Export Contacts (.vcf)</button>
+      <button class="btn btn-outline btn-sm" id="btn-export-roster-csv">⬇ Export Roster CSV</button>
+      <button class="btn btn-primary btn-sm" id="btn-add-student">+ Add Intern</button>
+    </div>
+  </div>
+  <div class="table-card"><table>
+    <thead><tr><th>Student</th><th>Grade · Day</th><th>Company</th><th>Supervisors</th><th>Transport AM / PM</th><th>Location</th><th>STW</th><th>PTO</th><th>Actions</th></tr></thead>
+    <tbody>${state.students.map(s=>{ const primary=getPrimarySupervisor(s),pm=getProgramManager(s); return `
+    <tr>
+      <td><div class="student-cell"><div class="student-avatar" style="background:${s.color}">${initials(s.name)}</div><div><div class="student-name">${s.name}</div><div class="student-email">${s.email}</div>${s.phone?`<div style="font-size:0.72rem;color:var(--muted);">${s.phone}</div>`:''}</div></div></td>
+      <td style="font-size:0.83rem;text-transform:capitalize;color:var(--navy);">${s.grade} <span style="color:var(--muted);font-size:0.75rem;">(${GD[s.grade]||'—'})</span></td>
+      <td style="font-size:0.83rem;"><div style="font-weight:600;color:var(--navy);">${s.company||'—'}</div></td>
+      <td style="font-size:0.8rem;max-width:160px;">${primary?`<div style="color:var(--navy);font-weight:600;">${primary.name}</div><div style="color:var(--muted);font-size:0.73rem;">${primary.email}</div>`:'<span style="color:#d1d5db;">—</span>'}${pm?`<div style="color:#1a56db;font-size:0.73rem;margin-top:2px;">📌 PM: ${pm.name}</div>`:''}${(s.supervisors||[]).filter(sv=>sv.role==='secondary').map(sv=>`<div style="color:var(--muted);font-size:0.72rem;">+ ${sv.name}</div>`).join('')}</td>
+      <td style="font-size:0.82rem;"><div style="color:var(--navy);">🌅 ${s.amTransport||'—'}</div><div style="color:var(--muted);margin-top:2px;">🌆 ${s.pmTransport||'—'}</div></td>
+      <td style="font-size:0.82rem;color:var(--muted);">${LL[s.location]||s.location}</td>
+      <td style="font-size:0.82rem;color:${s.straightToWork==='permanent'?'#16a085':'var(--muted)'};">${SL[s.straightToWork]||s.straightToWork}</td>
+      <td><span style="padding:2px 8px;border-radius:100px;font-size:0.75rem;font-weight:600;${s.ptoUsed?'background:#fee2e2;color:#991b1b;':'background:#dcfce7;color:#15803d;'}">${s.ptoUsed?'Used':'Available'}</span></td>
+      <td><div style="display:flex;gap:6px;flex-wrap:wrap;"><button class="btn-edit-student" data-sid="${s.id}" style="padding:4px 10px;background:var(--cream);color:var(--navy);border:1.5px solid var(--border);border-radius:6px;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:'Open Sans',sans-serif;">Edit</button><button class="btn btn-danger btn-sm" data-remove="${s.id}">Remove</button></div></td>
+    </tr>`; }).join('')}</tbody>
+  </table></div>
+  ${state.students.some(s=>s.jobHistory?.length>0)?`<div style="margin-top:1.5rem;background:white;border-radius:16px;border:1px solid var(--border);overflow:hidden;"><div style="padding:12px 20px;border-bottom:1px solid var(--border);font-weight:600;font-size:0.9rem;color:var(--navy);">📋 Job Change History</div><table style="width:100%;border-collapse:collapse;"><thead><tr>${['Student','Previous Company','Previous Supervisor','End Date'].map(h=>`<th style="padding:8px 16px;text-align:left;font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);background:#fafafa;border-bottom:1px solid var(--border);">${h}</th>`).join('')}</tr></thead><tbody>${state.students.flatMap(s=>(s.jobHistory||[]).map(h=>`<tr style="border-bottom:1px solid #f3f4f6;"><td style="padding:10px 16px;font-weight:600;font-size:0.85rem;color:var(--navy);">${s.name}</td><td style="padding:10px 16px;font-size:0.82rem;color:var(--muted);">${h.company||'—'}</td><td style="padding:10px 16px;font-size:0.82rem;color:var(--muted);">${h.supervisorName||'—'}</td><td style="padding:10px 16px;font-size:0.82rem;color:var(--muted);">${h.endDate||'—'}</td></tr>`)).join('')}</tbody></table></div>`:''}
+  </div>`;
+}
+
+// ─── SETUP ─────────────────────────────────────────
+function renderSetup() {
+const twd=DEMO_CALENDAR.filter(d=>!d.holiday).length;
+const bg={};DEMO_CALENDAR.filter(d=>!d.holiday).forEach(d=>{bg[d.grade]=(bg[d.grade]||0)+1;});
+return `<div class="fade-in">
+
+  <div class="dashboard-header"><div><div class="page-title">Program Setup</div><div class="page-subtitle">Academic calendar, grade cohort assignments, and year configuration</div></div></div>
+  <div style="background:white;border-radius:16px;border:1px solid var(--border);padding:1.5rem;margin-bottom:1.5rem;">
+    <div class="section-title" style="margin-bottom:0.5rem;">Grade Cohort Schedule</div>
+    <div class="section-sub">Students work one day per week based on their grade. Fridays are never deployment days.</div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-top:1rem;">
+      ${Object.entries(GRADE_DAYS).map(([g,d])=>`<div style="background:var(--cream);border-radius:12px;padding:1rem;text-align:center;border:2px solid var(--border);"><div style="font-size:1.5rem;margin-bottom:6px;">${{junior:'🟦',senior:'🟪',freshman:'🟩',sophomore:'🟧'}[g]}</div><div style="font-weight:700;font-size:0.95rem;color:var(--navy);text-transform:capitalize;">${g}s</div><div style="font-size:0.82rem;color:var(--muted);margin-top:2px;">${d}s</div><div style="font-size:0.75rem;color:var(--muted);margin-top:4px;">${bg[g]||0} work days this semester</div></div>`).join('')}
+    </div>
+  </div>
+  <div style="background:white;border-radius:16px;border:1px solid var(--border);padding:1.5rem;margin-bottom:1.5rem;">
+    <div class="section-title" style="margin-bottom:0.5rem;">Transport Plan Reference</div>
+    <div class="section-sub">All available AM and PM transport options for the program</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1rem;">
+      <div><div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:8px;">🌅 AM Options</div><div style="display:flex;flex-direction:column;gap:4px;">${AM_TRANSPORT.map(t=>`<div style="font-size:0.85rem;color:var(--navy);padding:5px 10px;background:var(--cream);border-radius:6px;border:1px solid var(--border);">${t} <span style="font-size:0.72rem;color:var(--muted);">(${state.students.filter(s=>s.amTransport===t).length} students)</span></div>`).join('')}</div></div>
+      <div><div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:8px;">🌆 PM Options</div><div style="display:flex;flex-direction:column;gap:4px;">${PM_TRANSPORT.map(t=>`<div style="font-size:0.85rem;color:var(--navy);padding:5px 10px;background:var(--cream);border-radius:6px;border:1px solid var(--border);">${t} <span style="font-size:0.72rem;color:var(--muted);">(${state.students.filter(s=>s.pmTransport===t).length} students)</span></div>`).join('')}</div></div>
+    </div>
+  </div>
+  <div style="background:white;border-radius:16px;border:1px solid var(--border);padding:1.5rem;margin-bottom:1.5rem;">
+    <div class="section-title" style="margin-bottom:0.5rem;">Academic Calendar — Demo Semester</div>
+    <div class="section-sub">Spring 2026 · Jan 5 – May 28 · Excludes holidays and breaks</div>
+    <div style="display:flex;gap:24px;flex-wrap:wrap;margin-top:1rem;">
+      <div><div style="font-size:2rem;font-weight:700;color:var(--navy);">${twd}</div><div style="font-size:0.8rem;color:var(--muted);">Total Work Days</div></div>
+      <div><div style="font-size:2rem;font-weight:700;color:var(--navy);">${DEMO_CALENDAR.filter(d=>d.holiday).length}</div><div style="font-size:0.8rem;color:var(--muted);">Holiday/Break Days</div></div>
+      <div><div style="font-size:2rem;font-weight:700;color:var(--navy);">${state.students.length}</div><div style="font-size:0.8rem;color:var(--muted);">Enrolled Students</div></div>
+      <div><div style="font-size:2rem;font-weight:700;color:var(--navy);">${state.students.filter(s=>s.straightToWork==='permanent').length}</div><div style="font-size:0.8rem;color:var(--muted);">Straight-to-Work</div></div>
+    </div>
+  </div>
+  <div class="alert alert-info">📅 In production, you'll be able to upload your school's academic calendar (Google Calendar, CSV, or iCal) at the start of each year to automatically populate all work days, holidays, and breaks.</div>
+  </div>`;
+}
+
+// ─── MODALS ────────────────────────────────────────
+function renderModal() {
+
+if(state.modal===‘emailTemplate’) {
+const {sid,outcomeType}=state.modalData;
+const student=state.students.find(s=>s.id===sid); if(!student) return ‘’;
+const crm=getCrmAction(state.viewDate,sid),detail=crm.eta||crm.reason||’’,tmpl=generateEmailTemplate(student,state.viewDate,outcomeType,detail);
+const primary=getPrimarySupervisor(student),pm=getProgramManager(student);
+return `<div class="modal-overlay" id="modal-overlay"><div class="modal fade-in" style="max-width:620px;"> <div class="modal-title">📧 Draft Supervisor Email</div> <div class="modal-subtitle">${student.name} · ${formatDateShort(state.viewDate)}</div> <div style="background:var(--cream);border-radius:10px;padding:1rem;margin-bottom:1rem;border:1px solid var(--border);font-size:0.82rem;"> <div style="margin-bottom:4px;"><strong>To:</strong> ${primary?`${primary.name} <${primary.email}>`:'(no supervisor on file)'}</div> ${pm?`<div style="margin-bottom:4px;"><strong>CC:</strong> ${pm.name} <${pm.email}> <span style="font-size:0.72rem;color:#1a56db;">(Program Manager)</span></div>`:''} <div><strong>Subject:</strong> ${tmpl.subject}</div> </div> <div style="margin-bottom:1rem;"><label class="form-label" style="margin-bottom:6px;display:block;">Email Body</label> <textarea id="email-body-text" rows="12" style="width:100%;padding:12px;border:1.5px solid var(--border);border-radius:8px;font-family:'Open Sans',sans-serif;font-size:0.82rem;line-height:1.6;resize:vertical;outline:none;color:var(--navy);background:white;" onfocus="this.style.borderColor='var(--navy)'" onblur="this.style.borderColor='var(--border)'">${tmpl.body}</textarea> </div> <div class="modal-actions" style="justify-content:space-between;align-items:center;"> <button id="btn-copy-email" style="padding:8px 16px;background:var(--cream);color:var(--navy);border:1.5px solid var(--border);border-radius:8px;font-size:0.82rem;font-weight:600;cursor:pointer;font-family:'Open Sans',sans-serif;">📋 Copy to Clipboard</button> <div style="display:flex;gap:8px;"> <button class="btn btn-outline btn-sm" id="btn-close-modal">Close</button> <a id="btn-open-mail" href="mailto:${tmpl.to}${tmpl.cc?'?cc='+encodeURIComponent(tmpl.cc)+'&':'?'}subject=${encodeURIComponent(tmpl.subject)}&body=${encodeURIComponent(tmpl.body)}" style="padding:8px 16px;background:var(--navy);color:white;border-radius:8px;font-size:0.82rem;font-weight:600;text-decoration:none;font-family:'Open Sans',sans-serif;display:inline-flex;align-items:center;gap:6px;">✉️ Open in Mail</a> </div> </div> </div></div>`;
+}
+
+if(state.modal===‘editStudent’) {
+const sid=state.modalData.sid, s=state.students.find(st=>st.id===sid); if(!s) return ‘’;
+const primary=getPrimarySupervisor(s)||{}, secondary=(s.supervisors||[]).find(sv=>sv.role===‘secondary’)||{}, pm=getProgramManager(s)||{};
+return `<div class="modal-overlay" id="modal-overlay"><div class="modal fade-in" style="max-width:680px;max-height:90vh;overflow-y:auto;"> <div class="modal-title">Edit Intern — ${s.name}</div> <div class="modal-subtitle">Update company, supervisors, transport, and placement details</div> <div style="background:var(--cream);border-radius:10px;padding:0.75rem 1rem;margin-bottom:1rem;display:flex;align-items:center;gap:10px;border:1px solid var(--border);"> <div style="width:36px;height:36px;border-radius:50%;background:${s.color};display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:white;">${initials(s.name)}</div> <div><div style="font-weight:600;color:var(--navy);">${s.name}</div><div style="font-size:0.78rem;color:var(--muted);">${s.email} · ${s.grade?.charAt(0).toUpperCase()+s.grade?.slice(1)||''}</div></div> </div> <div class="form-group"><label class="form-label">Company / Work Site</label><input class="form-input" id="edit-company" value="${s.company||''}" placeholder="Company name" /></div> <div style="background:var(--cream);border-radius:10px;padding:1rem;margin-bottom:1rem;border:1px solid var(--border);"> <div style="font-size:0.78rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:10px;">Supervisors</div> <div class="roster-grid" style="margin-bottom:0.75rem;"><div class="form-group" style="margin-bottom:0;"><label class="form-label">Primary Name</label><input class="form-input" id="edit-sv-primary-name" value="${primary.name||''}" placeholder="Full name" /></div><div class="form-group" style="margin-bottom:0;"><label class="form-label">Primary Email</label><input class="form-input" id="edit-sv-primary-email" value="${primary.email||''}" placeholder="email@company.com" /></div></div> <div class="roster-grid" style="margin-bottom:0.75rem;"><div class="form-group" style="margin-bottom:0;"><label class="form-label">Secondary Name <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label><input class="form-input" id="edit-sv-secondary-name" value="${secondary.name||''}" placeholder="Full name" /></div><div class="form-group" style="margin-bottom:0;"><label class="form-label">Secondary Email</label><input class="form-input" id="edit-sv-secondary-email" value="${secondary.email||''}" placeholder="email@company.com" /></div></div> <div class="roster-grid"><div class="form-group" style="margin-bottom:0;"><label class="form-label">Program Manager Name <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label><input class="form-input" id="edit-sv-pm-name" value="${pm.name||''}" placeholder="Full name" /></div><div class="form-group" style="margin-bottom:0;"><label class="form-label">Program Manager Email</label><input class="form-input" id="edit-sv-pm-email" value="${pm.email||''}" placeholder="email@company.com" /></div></div> </div> <div class="roster-grid"> <div class="form-group"><label class="form-label">AM Transport</label><select class="form-input" id="edit-am-transport"><option value="">— None —</option>${AM_TRANSPORT.map(t=>`<option value=”${t}” ${s.amTransport===t?‘selected’:’’}>${t}</option>`).join('')}</select></div> <div class="form-group"><label class="form-label">PM Transport</label><select class="form-input" id="edit-pm-transport"><option value="">— None —</option>${PM_TRANSPORT.map(t=>`<option value=”${t}” ${s.pmTransport===t?‘selected’:’’}>${t}</option>`).join('')}</select></div> </div> <div class="roster-grid"> <div class="form-group"><label class="form-label">Location</label><select class="form-input" id="edit-location"><option value="on-site" ${s.location==='on-site'?'selected':''}>On-Site</option><option value="remote-campus" ${s.location==='remote-campus'?'selected':''}>Remote on Campus</option><option value="works-at-school" ${s.location==='works-at-school'?'selected':''}>Works at School</option></select></div> <div class="form-group"><label class="form-label">Straight-to-Work</label><select class="form-input" id="edit-stw"><option value="none" ${s.straightToWork==='none'?'selected':''}>None</option><option value="permanent" ${s.straightToWork==='permanent'?'selected':''}>Permanent Agreement on File</option></select></div> </div> <div class="form-group"><label class="form-label">Cell Phone</label><input class="form-input" id="edit-phone" type="tel" value="${s.phone||''}" placeholder="312-555-0100" /></div> <div style="background:#fff8ec;border-radius:10px;padding:0.75rem 1rem;margin-bottom:1rem;border:1px solid #fde68a;"> <div style="font-size:0.78rem;font-weight:600;color:var(--amber);margin-bottom:4px;">📋 Job Change?</div> <label style="display:flex;align-items:center;gap:8px;cursor:pointer;"><input type="checkbox" id="edit-is-job-change" style="width:16px;height:16px;accent-color:var(--navy);cursor:pointer;" /><span style="font-size:0.82rem;color:var(--text);">This involves a job / company change — log current placement to history before updating</span></label> </div> <div class="modal-actions"><button class="btn btn-outline btn-sm" id="btn-close-modal">Cancel</button><button class="btn btn-primary btn-sm" id="btn-save-edit-student">Save Changes</button></div> </div></div>`;
+}
+
+if(state.modal===‘importRoster’) {
+const preview=state.modalData.preview||[], errors=state.modalData.errors||[];
+return `<div class="modal-overlay" id="modal-overlay"><div class="modal fade-in" style="max-width:700px;max-height:90vh;overflow-y:auto;"> <div class="modal-title">⬆ Import Roster CSV</div> <div class="modal-subtitle">Upload a CSV to bulk-add or update students</div> <div style="background:var(--cream);border-radius:10px;padding:1rem;margin-bottom:1rem;border:1px solid var(--border);"> <div style="font-size:0.8rem;font-weight:600;color:var(--navy);margin-bottom:6px;">Required CSV columns:</div> <div style="font-size:0.78rem;color:var(--muted);font-family:'Courier New',monospace;background:white;padding:8px 12px;border-radius:6px;border:1px solid var(--border);line-height:1.8;">name, email, grade, phone, company,<br>supervisor_name, supervisor_email,<br>pm_name, pm_email,<br>am_transport, pm_transport,<br>location, straight_to_work</div> <button id="btn-download-template" style="margin-top:10px;padding:6px 14px;background:white;color:var(--navy);border:1.5px solid var(--border);border-radius:8px;font-size:0.8rem;font-weight:600;cursor:pointer;font-family:'Open Sans',sans-serif;">⬇ Download Template CSV</button> </div> <div class="form-group"><label class="form-label">Select CSV File</label><input type="file" id="roster-file-input" accept=".csv" style="width:100%;padding:10px;border:2px dashed var(--border);border-radius:8px;font-family:'Open Sans',sans-serif;font-size:0.85rem;cursor:pointer;" /></div> ${errors.length?`<div style="background:#fdecea;border-radius:8px;padding:10px 14px;margin-bottom:1rem;border:1px solid #fca5a5;"><div style="font-size:0.8rem;font-weight:600;color:var(--red);margin-bottom:4px;">⚠️ Errors found:</div>${errors.map(e=>`<div style="font-size:0.78rem;color:var(--red);">${e}</div>`).join(’’)}</div>`:''} ${preview.length?`<div><div style="font-size:0.8rem;font-weight:600;color:var(--navy);margin-bottom:8px;">Preview — ${preview.length} student${preview.length!==1?‘s’:’’} ready to import:</div><div style="max-height:200px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;"><table style="width:100%;border-collapse:collapse;"><thead><tr>${[‘Name’,‘Grade’,‘Company’,‘Supervisor’,‘AM’,‘PM’].map(h=>`<th style="padding:6px 10px;text-align:left;font-size:0.7rem;font-weight:600;text-transform:uppercase;color:var(--muted);background:#fafafa;border-bottom:1px solid var(--border);">${h}</th>`).join(’’)}</tr></thead><tbody>${preview.map(r=>`<tr style="border-bottom:1px solid #f3f4f6;"><td style="padding:7px 10px;font-size:0.82rem;font-weight:600;color:var(--navy);">${r.name}</td><td style="padding:7px 10px;font-size:0.78rem;color:var(--muted);text-transform:capitalize;">${r.grade}</td><td style="padding:7px 10px;font-size:0.78rem;color:var(--muted);">${r.company||'—'}</td><td style="padding:7px 10px;font-size:0.78rem;color:var(--muted);">${r.supervisor_name||'—'}</td><td style="padding:7px 10px;font-size:0.78rem;color:var(--muted);">${r.am_transport||'—'}</td><td style="padding:7px 10px;font-size:0.78rem;color:var(--muted);">${r.pm_transport||'—'}</td></tr>`).join(’’)}</tbody></table></div></div>`:''} <div class="modal-actions" style="margin-top:1.25rem;"><button class="btn btn-outline btn-sm" id="btn-close-modal">Cancel</button>${preview.length?`<button class="btn btn-primary btn-sm" id="btn-confirm-import">Import ${preview.length} Student${preview.length!==1?‘s’:’’}</button>`:''}</div> </div></div>`;
+}
+
+if(state.modal===‘prelog’) {
+const md=state.modalData, futureDays=DEMO_CALENDAR.filter(d=>!d.holiday&&d.date>=todayISO()).slice(0,40);
+return `<div class="modal-overlay" id="modal-overlay"><div class="modal fade-in" style="max-width:480px;"> <div class="modal-title">📋 Pre-log Absence</div><div class="modal-subtitle">Log a known absence for any upcoming work day</div> <div class="form-group"><label class="form-label">Work Date</label><select class="form-input" id="prelog-date">${futureDays.map(d=>`<option value=”${d.date}” ${(md.date||state.viewDate)===d.date?‘selected’:’’}>${formatDateLong(d.date)} (${d.grade}s)</option>`).join('')}</select></div> <div class="form-group"><label class="form-label">Student</label><select class="form-input" id="prelog-student"><option value="">Select student…</option>${state.students.map(s=>`<option value=”${s.id}” ${md.sid===s.id?‘selected’:’’}>${s.name} (${s.grade})</option>`).join('')}</select></div> <div class="form-group"><label class="form-label">Type</label><select class="form-input" id="prelog-type"><option value="pto" ${(md.type||'pto')==='pto'?'selected':''}>🏖 PTO</option><option value="makeup" ${md.type==='makeup'?'selected':''}>📅 Make-Up Day</option></select></div> <div class="form-group"><label class="form-label">Reason / Notes <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label><input class="form-input" id="prelog-reason" placeholder="e.g. Medical appointment" value="${md.reason||''}" /></div> <div class="modal-actions"><button class="btn btn-outline btn-sm" id="btn-close-modal">Cancel</button><button class="btn btn-primary btn-sm" id="btn-save-prelog">Save Pre-log</button></div> </div></div>`;
+}
+
+if(state.modal===‘addStudent’) {
+const md=state.modalData||{};
+return `<div class="modal-overlay" id="modal-overlay"><div class="modal fade-in" style="max-width:620px;max-height:90vh;overflow-y:auto;"> <div class="modal-title">Add New Intern</div><div class="modal-subtitle">Enter student details to enroll them in the program.</div> <div class="roster-grid"><div class="form-group"><label class="form-label">Full Name</label><input class="form-input" id="new-name" placeholder="First Last" value="${md.name||''}" /></div><div class="form-group"><label class="form-label">School Email</label><input class="form-input" id="new-email" placeholder="student@cristoreytc.edu" value="${md.email||''}" /></div></div> <div class="roster-grid"><div class="form-group"><label class="form-label">Grade</label><select class="form-input" id="new-grade">${['freshman','sophomore','junior','senior'].map(g=>`<option value=”${g}” ${md.grade===g?‘selected’:’’}>${g.charAt(0).toUpperCase()+g.slice(1)} (${GRADE_DAYS[g]}s)</option>`).join('')}</select></div><div class="form-group"><label class="form-label">Cell Phone</label><input class="form-input" id="new-phone-roster" type="tel" placeholder="312-555-0100" value="${md.phone||''}" /></div></div> <div class="form-group"><label class="form-label">Company / Work Site</label><input class="form-input" id="new-company" placeholder="Company name" value="${md.company||''}" /></div> <div class="roster-grid"><div class="form-group"><label class="form-label">Primary Supervisor Name</label><input class="form-input" id="new-sv-primary-name" placeholder="Full name" value="${md.svPrimaryName||''}" /></div><div class="form-group"><label class="form-label">Primary Supervisor Email</label><input class="form-input" id="new-sv-primary-email" placeholder="email@company.com" value="${md.svPrimaryEmail||''}" /></div></div> <div class="roster-grid"><div class="form-group"><label class="form-label">Program Manager Name <span style="font-weight:400;text-transform:none;letter-spacing:0;">(optional)</span></label><input class="form-input" id="new-sv-pm-name" placeholder="Full name" value="${md.pmName||''}" /></div><div class="form-group"><label class="form-label">Program Manager Email</label><input class="form-input" id="new-sv-pm-email" placeholder="email@company.com" value="${md.pmEmail||''}" /></div></div> <div class="roster-grid"><div class="form-group"><label class="form-label">AM Transport</label><select class="form-input" id="new-am-transport"><option value="">— None —</option>${AM_TRANSPORT.map(t=>`<option value=”${t}” ${md.amTransport===t?‘selected’:’’}>${t}</option>`).join('')}</select></div><div class="form-group"><label class="form-label">PM Transport</label><select class="form-input" id="new-pm-transport"><option value="">— None —</option>${PM_TRANSPORT.map(t=>`<option value=”${t}” ${md.pmTransport===t?‘selected’:’’}>${t}</option>`).join('')}</select></div></div> <div class="roster-grid"><div class="form-group"><label class="form-label">Location</label><select class="form-input" id="new-location"><option value="on-site" ${(md.location||'on-site')==='on-site'?'selected':''}>On-Site</option><option value="remote-campus" ${md.location==='remote-campus'?'selected':''}>Remote on Campus</option></select></div><div class="form-group"><label class="form-label">Straight-to-Work</label><select class="form-input" id="new-stw"><option value="none" ${(md.straightToWork||'none')==='none'?'selected':''}>None</option><option value="permanent" ${md.straightToWork==='permanent'?'selected':''}>Permanent Agreement on File</option></select></div></div> <div class="modal-actions"><button class="btn btn-outline btn-sm" id="btn-close-modal">Cancel</button><button class="btn btn-primary btn-sm" id="btn-save-student">Add Intern</button></div> </div></div>`;
+}
+
+if(state.modal===‘displayCode’) {
+const ce=getDailyCode(state.viewDate);
+return `<div class="modal-overlay" id="modal-overlay" style="background:#16243f;"><div style="text-align:center;color:white;animation:fadeIn 0.3s ease;"> <div style="margin-bottom:2rem;"><div style="font-family:'Open Sans',sans-serif;font-size:1rem;font-weight:700;color:rgba(255,255,255,0.55);letter-spacing:0.08em;">Cristo Rey Jesuit High School Twin Cities</div><div style="width:32px;height:2px;background:#f0a030;margin:8px auto;border-radius:1px;"></div><div style="font-size:0.7rem;letter-spacing:0.22em;text-transform:uppercase;color:rgba(255,255,255,0.28);">Today's Check-In Code</div></div> <div style="font-family:'Oswald',sans-serif;font-weight:700;font-size:min(20vw,160px);letter-spacing:0.18em;color:#f0a030;line-height:1;">${ce?.code||'——'}</div> <div style="font-size:0.75rem;color:rgba(255,255,255,0.2);margin-top:2rem;letter-spacing:0.12em;text-transform:uppercase;">${formatDateLong(state.viewDate)}</div> <button class="btn btn-outline btn-sm" id="btn-close-modal" style="margin-top:2.5rem;color:rgba(255,255,255,0.6);border-color:rgba(255,255,255,0.15);">✕ Close Display Mode</button> </div></div>`;
+}
+}
+
+// ═══════════════════════════════════════════════════
+//  HANDLERS
+// ═══════════════════════════════════════════════════
+function attachHandlers() {
+const iso=state.viewDate;
+document.getElementById(‘btn-logout’)?.addEventListener(‘click’,()=>{ state.user=null; state.checkinInput=’’; state.checkinState=‘idle’; render(); });
+document.querySelectorAll(’.nav-tab’).forEach(t=>t.addEventListener(‘click’,()=>{ state.adminTab=t.dataset.tab; render(); }));
+document.getElementById(‘btn-prev-day’)?.addEventListener(‘click’,()=>{ const a=DEMO_CALENDAR.filter(d=>!d.holiday).map(d=>d.date),i=a.indexOf(state.viewDate); if(i>0){state.viewDate=a[i-1];render();} });
+document.getElementById(‘btn-next-day’)?.addEventListener(‘click’,()=>{ const a=DEMO_CALENDAR.filter(d=>!d.holiday).map(d=>d.date),i=a.indexOf(state.viewDate); if(i<a.length-1){state.viewDate=a[i+1];render();} });
+document.getElementById(‘btn-today’)?.addEventListener(‘click’,()=>{ state.viewDate=nearestWorkDay(); render(); });
+document.getElementById(‘btn-prev-month’)?.addEventListener(‘click’,()=>{ state.calendarMonth–; if(state.calendarMonth<0){state.calendarMonth=11;state.calendarYear–;} render(); });
+document.getElementById(‘btn-next-month’)?.addEventListener(‘click’,()=>{ state.calendarMonth++; if(state.calendarMonth>11){state.calendarMonth=0;state.calendarYear++;} render(); });
+document.querySelectorAll(’.cal-day[data-date]’).forEach(c=>{ c.addEventListener(‘click’,()=>{ const d=c.dataset.date; if(!isWorkDay(d)) return; state.viewDate=d; state.adminTab=‘attendance’; render(); }); });
+document.getElementById(‘btn-gen-code’)?.addEventListener(‘click’,()=>{ if(getDailyCode(iso)&&!confirm(“Generate a new code? Students who haven’t checked in yet will need the new code.”)) return; state.dailyCodes[iso]={code:generateCode(),generatedAt:Date.now()}; render(); });
+document.getElementById(‘btn-display-code’)?.addEventListener(‘click’,()=>{ state.modal=‘displayCode’; render(); });
+document.getElementById(‘btn-prelog’)?.addEventListener(‘click’,()=>{ state.modal=‘prelog’; state.modalData={date:iso}; render(); });
+document.getElementById(‘btn-save-prelog’)?.addEventListener(‘click’,()=>{ const d=document.getElementById(‘prelog-date’)?.value,s=document.getElementById(‘prelog-student’)?.value,t=document.getElementById(‘prelog-type’)?.value,r=document.getElementById(‘prelog-reason’)?.value.trim(); if(!d||!s){alert(‘Please select a date and student.’); return;} if(!state.preloggedAbsences[d]) state.preloggedAbsences[d]={}; state.preloggedAbsences[d][s]={type:t,reason:r,loggedAt:Date.now()}; state.modal=null; state.modalData={}; render(); });
+document.querySelectorAll(’.btn-remove-prelog’).forEach(b=>{ b.addEventListener(‘click’,()=>{ const {date,sid}=b.dataset; if(state.preloggedAbsences[date]) delete state.preloggedAbsences[date][sid]; render(); }); });
+document.querySelectorAll(’.status-select’).forEach(s=>{ s.addEventListener(‘change’,e=>{ const sid=e.target.dataset.student; if(!state.attendance[iso]) state.attendance[iso]={}; if(!state.attendance[iso][sid]) state.attendance[iso][sid]={}; state.attendance[iso][sid].status=e.target.value; if(e.target.value!==‘absent’&&!state.attendance[iso][sid].checkInTime) state.attendance[iso][sid].checkInTime=Date.now(); }); });
+document.querySelectorAll(’.loc-override-select’).forEach(s=>{ s.addEventListener(‘change’,e=>{ const sid=e.target.dataset.locstudent; if(!state.locationOverrides[iso]) state.locationOverrides[iso]={}; if(e.target.value===‘clear’||!e.target.value) delete state.locationOverrides[iso][sid]; else state.locationOverrides[iso][sid]=e.target.value; render(); }); });
+document.querySelectorAll(’.crm-action-select’).forEach(s=>{ s.addEventListener(‘change’,e=>{ const sid=e.target.dataset.crm; if(!state.crmActions[iso]) state.crmActions[iso]={}; state.crmActions[iso][sid]={action:e.target.value,eta:’’,reason:’’}; render(); }); });
+document.querySelectorAll(’.crm-field’).forEach(i=>{ i.addEventListener(‘input’,e=>{ const sid=e.target.dataset.crmField,f=e.target.dataset.field; if(!state.crmActions[iso]) state.crmActions[iso]={}; if(!state.crmActions[iso][sid]) state.crmActions[iso][sid]={}; state.crmActions[iso][sid][f]=e.target.value; }); });
+document.querySelectorAll(’.btn-draft-email’).forEach(b=>{ b.addEventListener(‘click’,()=>{ const sid=b.dataset.sid,crm=getCrmAction(iso,sid); state.modal=‘emailTemplate’; state.modalData={sid,outcomeType:crm.action}; render(); }); });
+document.getElementById(‘btn-copy-email’)?.addEventListener(‘click’,()=>{ const t=document.getElementById(‘email-body-text’)?.value; if(t) navigator.clipboard.writeText(t).then(()=>{ const b=document.getElementById(‘btn-copy-email’); if(b){b.textContent=‘✓ Copied!’; setTimeout(()=>{b.textContent=‘📋 Copy to Clipboard’;},2000);} }); });
+document.querySelectorAll(’.btn-apply-pto’).forEach(b=>{ b.addEventListener(‘click’,()=>{ const sid=b.dataset.sid,student=state.students.find(s=>s.id===sid); if(!student) return; if(confirm(`Apply PTO for ${student.name} for the semester?`)){student.ptoUsed=true; if(!state.attendance[iso]) state.attendance[iso]={}; if(!state.attendance[iso][sid]) state.attendance[iso][sid]={status:‘absent’}; state.attendance[iso][sid].ptoApplied=true; render();} }); });
+document.querySelectorAll(’.btn-stw-approve’).forEach(b=>{ b.addEventListener(‘click’,()=>{ const sid=b.dataset.sid; if(!state.attendance[iso]) state.attendance[iso]={}; state.attendance[iso][sid]={status:‘present’,checkInTime:Date.now(),stwApproved:true}; render(); }); });
+document.querySelectorAll(’.btn-stw-late’).forEach(b=>{ b.addEventListener(‘click’,()=>{ const sid=b.dataset.sid; if(!state.crmActions[iso]) state.crmActions[iso]={}; state.crmActions[iso][sid]={action:‘no-answer’}; render(); }); });
+document.querySelectorAll(’.btn-toggle-uniform’).forEach(b=>{ b.addEventListener(‘click’,()=>{ const sid=b.dataset.sid; if(!state.attendance[iso]) state.attendance[iso]={}; if(!state.attendance[iso][sid]) state.attendance[iso][sid]={status:‘absent’}; const cur=state.attendance[iso][sid].uniformViolation; if(!cur&&!confirm(`Flag uniform violation for ${state.students.find(s=>s.id===sid)?.name}? This will be logged for Salesforce.`)) return; state.attendance[iso][sid].uniformViolation=!cur; render(); }); });
+document.getElementById(‘search-input’)?.addEventListener(‘input’,e=>{ state.searchQuery=e.target.value; render(); });
+
+// Check-in
+const ci=document.getElementById(‘code-input’);
+if(ci){ci.addEventListener(‘input’,e=>{state.checkinInput=e.target.value.toUpperCase();state.checkinState=‘idle’;e.target.value=state.checkinInput;});ci.focus();}
+document.getElementById(‘btn-checkin’)?.addEventListener(‘click’,()=>{
+if(state.isTyping) return;
+const input=state.checkinInput.trim().toUpperCase();
+if(!input){state.checkinState=‘error’;state.checkinMsg=‘Please enter the daily code from the room screen.’;render();return;}
+const ce=getDailyCode(iso);
+if(!ce){state.checkinState=‘error’;state.checkinMsg=‘No code has been generated yet. Ask your program coordinator.’;render();return;}
+if(input!==ce.code){state.checkinState=‘error’;state.checkinMsg=“That code doesn’t match today’s code. Double-check the screen.”;render();return;}
+state.checkinStep=‘details’;state.checkinState=‘idle’;render();
+});
+document.getElementById(‘uniform-confirmed’)?.addEventListener(‘change’,e=>{state.uniformConfirmed=e.target.checked;render();});
+document.getElementById(‘parent-pickup’)?.addEventListener(‘change’,e=>{state.parentPickup=e.target.checked;render();});
+document.getElementById(‘no-phone-today’)?.addEventListener(‘change’,e=>{state.noPhoneToday=e.target.checked;if(e.target.checked){state.phoneChanged=false;state.newPhone=’’;}render();});
+document.getElementById(‘phone-changed’)?.addEventListener(‘change’,e=>{state.phoneChanged=e.target.checked;render();});
+document.getElementById(‘checkin-notes’)?.addEventListener(‘input’,e=>{state.checkinNotes=e.target.value;});
+document.getElementById(‘new-phone’)?.addEventListener(‘input’,e=>{state.newPhone=e.target.value;});
+document.getElementById(‘btn-submit-details’)?.addEventListener(‘click’,()=>{
+const sid=state.user.id,now=Date.now(),isSTW=isEffectivelyStraightToWork(iso,sid),cutoff=new Date(iso+(isSTW?‘T08:45:00’:‘T08:00:00’)),isLate=now>cutoff.getTime();
+if(!state.attendance[iso]) state.attendance[iso]={};
+state.attendance[iso][sid]={status:isLate?‘late’:‘present’,checkInTime:now,dailyNote:state.checkinNotes,parentPickup:state.parentPickup,uniformConfirmed:state.uniformConfirmed,noPhoneToday:state.noPhoneToday,phoneUpdated:state.phoneChanged,newPhone:state.newPhone,arrivedWhileCalling:!!(state.crmActions[iso]?.[sid]?.action)};
+if(state.phoneChanged&&state.newPhone){const s=state.students.find(s=>s.id===sid);if(s) s.phone=state.newPhone;}
+state.checkinStep=‘code’;state.checkinInput=’’;state.checkinNotes=’’;state.parentPickup=false;state.uniformConfirmed=false;state.noPhoneToday=false;state.phoneChanged=false;state.newPhone=’’;render();
+});
+
+// Modal
+document.getElementById(‘btn-close-modal’)?.addEventListener(‘click’,()=>{state.modal=null;state.modalData={};render();});
+document.getElementById(‘modal-overlay’)?.addEventListener(‘click’,e=>{if(e.target.id===‘modal-overlay’){state.modal=null;state.modalData={};render();}});
+
+// Add student
+document.getElementById(‘btn-add-student’)?.addEventListener(‘click’,()=>{state.modal=‘addStudent’;state.modalData={};render();});
+document.getElementById(‘btn-save-student’)?.addEventListener(‘click’,()=>{
+const name=document.getElementById(‘new-name’)?.value.trim(),email=document.getElementById(‘new-email’)?.value.trim(),grade=document.getElementById(‘new-grade’)?.value;
+if(!name||!email||!grade){alert(‘Name, email, and grade are required.’);return;}
+const company=document.getElementById(‘new-company’)?.value.trim()||’’,svN=document.getElementById(‘new-sv-primary-name’)?.value.trim()||’’,svE=document.getElementById(‘new-sv-primary-email’)?.value.trim()||’’,pmN=document.getElementById(‘new-sv-pm-name’)?.value.trim()||’’,pmE=document.getElementById(‘new-sv-pm-email’)?.value.trim()||’’,amT=document.getElementById(‘new-am-transport’)?.value||’’,pmT=document.getElementById(‘new-pm-transport’)?.value||’’,loc=document.getElementById(‘new-location’)?.value||‘on-site’,stw=document.getElementById(‘new-stw’)?.value||‘none’,phone=document.getElementById(‘new-phone-roster’)?.value.trim()||’’;
+const supervisors=[]; if(svN||svE) supervisors.push({id:‘sv’+Date.now()+‘a’,name:svN,email:svE,role:‘primary’}); if(pmN||pmE) supervisors.push({id:‘sv’+Date.now()+‘b’,name:pmN,email:pmE,role:‘program-manager’});
+state.students.push({id:‘student’+Date.now(),name,email,role:‘student’,grade,phone,company,supervisors,amTransport:amT,pmTransport:pmT,location:loc,straightToWork:stw,ptoUsed:false,jobHistory:[],color:COLORS[Math.floor(Math.random()*COLORS.length)]});
+state.modal=null;state.modalData={};render();
+});
+
+// Edit student
+document.querySelectorAll(’.btn-edit-student’).forEach(b=>{b.addEventListener(‘click’,()=>{state.modal=‘editStudent’;state.modalData={sid:b.dataset.sid};render();});});
+document.getElementById(‘btn-save-edit-student’)?.addEventListener(‘click’,()=>{
+const sid=state.modalData.sid,s=state.students.find(st=>st.id===sid); if(!s) return;
+if(document.getElementById(‘edit-is-job-change’)?.checked){ const p=getPrimarySupervisor(s); s.jobHistory=s.jobHistory||[]; s.jobHistory.push({company:s.company,supervisorName:p?.name||’’,supervisorEmail:p?.email||’’,endDate:todayISO()}); }
+s.company=document.getElementById(‘edit-company’)?.value.trim()||s.company;
+s.amTransport=document.getElementById(‘edit-am-transport’)?.value||s.amTransport;
+s.pmTransport=document.getElementById(‘edit-pm-transport’)?.value||s.pmTransport;
+s.location=document.getElementById(‘edit-location’)?.value||s.location;
+s.straightToWork=document.getElementById(‘edit-stw’)?.value||s.straightToWork;
+s.phone=document.getElementById(‘edit-phone’)?.value.trim()||s.phone;
+const sups=[]; const pN=document.getElementById(‘edit-sv-primary-name’)?.value.trim(),pE=document.getElementById(‘edit-sv-primary-email’)?.value.trim(),sN=document.getElementById(‘edit-sv-secondary-name’)?.value.trim(),sE=document.getElementById(‘edit-sv-secondary-email’)?.value.trim(),mN=document.getElementById(‘edit-sv-pm-name’)?.value.trim(),mE=document.getElementById(‘edit-sv-pm-email’)?.value.trim();
+if(pN||pE) sups.push({id:‘sv’+Date.now()+‘a’,name:pN,email:pE,role:‘primary’}); if(sN||sE) sups.push({id:‘sv’+Date.now()+‘b’,name:sN,email:sE,role:‘secondary’}); if(mN||mE) sups.push({id:‘sv’+Date.now()+‘c’,name:mN,email:mE,role:‘program-manager’});
+if(sups.length) s.supervisors=sups; state.modal=null;state.modalData={};render();
+});
+
+// Remove
+document.querySelectorAll(’[data-remove]’).forEach(b=>{b.addEventListener(‘click’,()=>{const sid=b.dataset.remove;if(confirm(‘Remove this intern from the roster?’)){state.students=state.students.filter(s=>s.id!==sid);render();}});});
+
+// Import
+document.getElementById(‘btn-import-roster’)?.addEventListener(‘click’,()=>{state.modal=‘importRoster’;state.modalData={};render();});
+document.getElementById(‘roster-file-input’)?.addEventListener(‘change’,e=>{const f=e.target.files[0];if(!f) return;const r=new FileReader();r.onload=ev=>{const{preview,errors}=parseRosterCSV(ev.target.result);state.modalData={…state.modalData,preview,errors};render();};r.readAsText(f);});
+document.getElementById(‘btn-confirm-import’)?.addEventListener(‘click’,()=>{
+(state.modalData.preview||[]).forEach(row=>{const ex=state.students.find(s=>s.email===row.email);const sups=[];if(row.supervisor_name||row.supervisor_email) sups.push({id:‘sv’+Date.now()+Math.random(),name:row.supervisor_name||’’,email:row.supervisor_email||’’,role:‘primary’});if(row.pm_name||row.pm_email) sups.push({id:‘sv’+Date.now()+Math.random(),name:row.pm_name||’’,email:row.pm_email||’’,role:‘program-manager’});
+if(ex){ex.company=row.company||ex.company;ex.amTransport=row.am_transport||ex.amTransport;ex.pmTransport=row.pm_transport||ex.pmTransport;ex.location=row.location||ex.location;ex.phone=row.phone||ex.phone;if(sups.length) ex.supervisors=sups;}
+else state.students.push({id:‘student’+Date.now()+Math.random(),name:row.name,email:row.email,role:‘student’,grade:row.grade?.toLowerCase()||‘freshman’,phone:row.phone||’’,company:row.company||’’,supervisors:sups,amTransport:row.am_transport||’’,pmTransport:row.pm_transport||’’,location:row.location||‘on-site’,straightToWork:row.straight_to_work===‘yes’?‘permanent’:‘none’,ptoUsed:false,jobHistory:[],color:COLORS[Math.floor(Math.random()*COLORS.length)]});
+});
+state.modal=null;state.modalData={};render();
+});
+document.getElementById(‘btn-download-template’)?.addEventListener(‘click’,()=>downloadCSV([[‘name’,‘email’,‘grade’,‘phone’,‘company’,‘supervisor_name’,‘supervisor_email’,‘pm_name’,‘pm_email’,‘am_transport’,‘pm_transport’,‘location’,‘straight_to_work’],[‘Jane Smith’,‘jsmith@cristoreytc.edu’,‘junior’,‘312-555-0100’,‘Acme Corp’,‘John Doe’,‘jdoe@acme.com’,‘Program Mgr’,‘pm@acme.com’,‘Shuttle 3’,‘Van 2’,‘on-site’,‘no’]],‘CWSP_Roster_Template.csv’));
+
+// Exports
+document.getElementById(‘btn-export’)?.addEventListener(‘click’,exportCSV);
+document.getElementById(‘btn-export-vcf’)?.addEventListener(‘click’,exportVCF);
+document.getElementById(‘btn-export-roster-csv’)?.addEventListener(‘click’,exportRosterCSV);
+}
+
+// ─── CSV PARSER ────────────────────────────────────
+function parseRosterCSV(text) {
+const lines=text.trim().split(’\n’); if(lines.length<2) return{preview:[],errors:[‘CSV is empty or missing headers’]};
+const headers=lines[0].split(’,’).map(h=>h.trim().replace(/^”|”$/g,’’).toLowerCase().replace(/ /g,’_’));
+const errors=[],preview=[];
+for(let i=1;i<lines.length;i++){
+const vals=lines[i].split(’,’).map(v=>v.trim().replace(/^”|”$/g,’’)),row={};
+headers.forEach((h,idx)=>{row[h]=vals[idx]||’’;});
+const miss=[‘name’,‘email’,‘grade’].filter(r=>!row[r]);
+if(miss.length){errors.push(`Row ${i+1}: Missing: ${miss.join(', ')}`);continue;}
+if(![‘freshman’,‘sophomore’,‘junior’,‘senior’].includes(row.grade?.toLowerCase())){errors.push(`Row ${i+1}: Invalid grade "${row.grade}"`);continue;}
+preview.push(row);
+}
+return{preview,errors};
+}
+
+// ─── EXPORTS ───────────────────────────────────────
+function exportCSV() {
+const iso=state.viewDate,students=studentsForDate(iso);
+const crmL={‘no-answer’:‘No Answer — Call Home’,‘arriving-late’:‘Arriving Late’,‘makeup-day’:‘Make-Up Day’,‘pto’:‘Taking PTO’};
+const rows=[[‘Student’,‘Grade’,‘Email’,‘Phone’,‘Company’,‘Primary Supervisor’,‘Supervisor Email’,‘Program Manager’,‘PM Email’,‘AM Transport’,‘PM Transport (Today)’,‘Location’,‘STW’,‘Status’,‘Check-in Time’,‘Uniform Confirmed’,‘Uniform Violation’,‘Parent Pick-Up’,‘No Phone Today’,‘Arrived While Calling’,‘CRM Action’,‘CRM Detail’,‘Note’,‘PTO Used’]];
+students.forEach(s=>{ const rec=getStudentRecord(iso,s.id)||{},crm=getCrmAction(iso,s.id),p=getPrimarySupervisor(s),pm=getProgramManager(s); rows.push([s.name,s.grade,s.email,s.phone||’’,s.company||’’,p?.name||’’,p?.email||’’,pm?.name||’’,pm?.email||’’,s.amTransport||’’,getEffectivePmTransport(iso,s.id),getEffectiveLocation(iso,s.id),isEffectivelyStraightToWork(iso,s.id)?‘Yes’:‘No’,rec.status||‘absent’,rec.checkInTime?formatTime(rec.checkInTime):’’,rec.uniformConfirmed?‘Yes’:‘No’,rec.uniformViolation?‘Yes’:‘No’,rec.parentPickup?‘Yes’:‘No’,rec.noPhoneToday?‘Yes’:‘No’,rec.arrivedWhileCalling?‘Yes’:‘No’,crm.action?crmL[crm.action]||crm.action:’’,crm.eta||crm.reason||’’,rec.dailyNote||’’,s.ptoUsed?‘Yes’:‘No’]); });
+downloadCSV(rows,`CWSP_Attendance_${iso}.csv`);
+}
+function exportRosterCSV() {
+const rows=[[‘Name’,‘Grade’,‘Email’,‘Phone’,‘Company’,‘Primary Supervisor’,‘Supervisor Email’,‘Program Manager’,‘PM Email’,‘Secondary Supervisors’,‘AM Transport’,‘PM Transport’,‘Location’,‘STW’,‘PTO Used’]];
+state.students.forEach(s=>{ const p=getPrimarySupervisor(s),pm=getProgramManager(s),sec=(s.supervisors||[]).filter(sv=>sv.role===‘secondary’).map(sv=>sv.name).join(’; ‘); rows.push([s.name,s.grade,s.email,s.phone||’’,s.company||’’,p?.name||’’,p?.email||’’,pm?.name||’’,pm?.email||’’,sec,s.amTransport||’’,s.pmTransport||’’,s.location,s.straightToWork,s.ptoUsed?‘Yes’:‘No’]); });
+downloadCSV(rows,`CWSP_Roster_${dateStr()}.csv`);
+}
+function exportVCF() {
+const withPhone=state.students.filter(s=>s.phone);
+if(!withPhone.length){alert(‘No students have phone numbers on file.’);return;}
+const cards=withPhone.map(s=>{ const [first,…rest]=s.name.split(’ ‘),p=getPrimarySupervisor(s); return [‘BEGIN:VCARD’,‘VERSION:3.0’,`FN:${s.name}`,`N:${rest.join(' ')};${first};;;`,`TEL;TYPE=CELL:${s.phone}`,`EMAIL;TYPE=WORK:${s.email}`,`ORG:${s.company||'CWSP Intern'}`,`TITLE:${s.grade?.charAt(0).toUpperCase()+s.grade?.slice(1)||'Intern'}`,`NOTE:Grade: ${s.grade} | Company: ${s.company||'N/A'} | Supervisor: ${p?.name||'N/A'} (${p?.email||''}) | AM: ${s.amTransport||'—'} | PM: ${s.pmTransport||'—'}`,‘END:VCARD’].join(’\r\n’); }).join(’\r\n’);
+const blob=new Blob([cards],{type:‘text/vcard;charset=utf-8’}),url=URL.createObjectURL(blob),a=document.createElement(‘a’);
+a.href=url;a.download=`CWSP_Contacts_${dateStr()}.vcf`;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+}
+function downloadCSV(rows,filename) {
+const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(’,’)).join(’\n’);
+const blob=new Blob([csv],{type:‘text/csv’}),url=URL.createObjectURL(blob),a=document.createElement(‘a’);
+a.href=url;a.download=filename;document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+}
+
+// ─── INIT ──────────────────────────────────────────
+render();
+</script></body></html>
